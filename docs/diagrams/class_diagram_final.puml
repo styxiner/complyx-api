@@ -1,0 +1,699 @@
+@startuml complyx_api_final_v2
+
+skinparam groupInheritance 3
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam DefaultFontSize 11
+skinparam linetype ortho
+
+' ══════════════════════════════════════════
+' PACKAGE: common (entidades base)
+' ══════════════════════════════════════════
+package common {
+  abstract class BaseEntity {
+    +id : UUID
+    +createdDate : LocalDateTime
+    +lastModified : LocalDateTime
+  }
+}
+
+' ══════════════════════════════════════════
+' PACKAGE: security
+' ══════════════════════════════════════════
+package security {
+
+  class AuthController {
+    +login(LoginDTO) : ResponseEntity<TokenResponseDTO>
+    +refresh(String refreshToken) : ResponseEntity<TokenResponseDTO>
+    +logout(String token) : ResponseEntity<Void>
+  }
+
+  class AuthService {
+    +login(LoginDTO) : TokenResponseDTO
+    +refreshToken(String) : TokenResponseDTO
+    +logout(String) : void
+    -invalidateToken(String) : void
+  }
+
+  class JwtUtil {
+    +generateToken(UserDetails) : String
+    +generateRefreshToken(UserDetails) : String
+    +extractUsername(String) : String
+    +validateToken(String, UserDetails) : boolean
+    +isTokenExpired(String) : boolean
+    -extractClaim(String, Function<Claims,T>) : T
+  }
+
+  class JwtAuthFilter {
+    +doFilterInternal(request, response, chain) : void
+    -extractTokenFromHeader(HttpRequest) : String
+    -setAuthentication(String, HttpRequest) : void
+  }
+
+  class UserDetailsServiceImpl {
+    +loadUserByUsername(String) : UserDetails
+  }
+
+  class SecurityConfig {
+    +securityFilterChain(HttpSecurity) : SecurityFilterChain
+    +passwordEncoder() : PasswordEncoder
+    +authManager(AuthConfig) : AuthenticationManager
+  }
+
+  class LoginDTO {
+    +username : String
+    +password : String
+  }
+
+  class TokenResponseDTO {
+    +accessToken : String
+    +refreshToken : String
+    +expiresIn : long
+  }
+
+  AuthController --> AuthService
+  AuthController ..> LoginDTO
+  AuthController ..> TokenResponseDTO
+  AuthService --> JwtUtil
+  AuthService --> UserDetailsServiceImpl
+  AuthService ..> TokenResponseDTO
+  JwtAuthFilter --> JwtUtil
+  JwtAuthFilter --> UserDetailsServiceImpl
+  UserDetailsServiceImpl ..|> UserDetailsService
+  SecurityConfig --> JwtAuthFilter
+  SecurityConfig --> UserDetailsServiceImpl
+}
+
+' ══════════════════════════════════════════
+' PACKAGE: users
+' ══════════════════════════════════════════
+package users {
+
+  class UserController {
+    +getAllUsers(UserFilter, Pageable) : Page<UserDTO>
+    +getUserById(UUID) : UserDTO
+    +createUser(UserCreateDTO) : ResponseEntity<UserDTO>
+    +updateUser(UUID, UserUpdateDTO) : UserDTO
+    +deleteUser(UUID) : ResponseEntity<Void>
+    +assignRole(UUID userId, UUID roleId) : ResponseEntity<Void>
+    +removeRole(UUID userId, UUID roleId) : ResponseEntity<Void>
+  }
+
+  class UserService {
+    +findAll(UserFilter, Pageable) : Page<UserDTO>
+    +findById(UUID) : UserDTO
+    +create(UserCreateDTO) : UserDTO
+    +update(UUID, UserUpdateDTO) : UserDTO
+    +delete(UUID) : void
+    +assignRole(UUID userId, UUID roleId) : void
+    +existsByUsername(String) : boolean
+  }
+
+  interface UserRepository {
+    +findByUsername(String) : Optional<UserEntity>
+    +findByEmail(String) : Optional<UserEntity>
+    +existsByUsername(String) : boolean
+    +existsByEmail(String) : boolean
+  }
+
+  interface RoleRepository {
+    +findByRolename(String) : Optional<RoleEntity>
+    +findByIdIn(Set<UUID>) : List<RoleEntity>
+  }
+
+  class UserEntity extends common.BaseEntity {
+    +username : String
+    +email : String
+    +passwordHash : String
+    +roles : Set<RoleEntity>
+  }
+
+  class RoleEntity extends common.BaseEntity {
+    +rolename : String
+  }
+
+  class UserDTO {
+    +id : UUID
+    +username : String
+    +email : String
+    +roles : Set<String>
+  }
+
+  class UserCreateDTO {
+    +username : String
+    +email : String
+    +password : String
+    +roleIds : Set<UUID>
+  }
+
+  class UserUpdateDTO {
+    +email : String
+    +password : String
+  }
+
+  class UserFilter {
+    +username : String
+    +email : String
+    +roleId : UUID
+  }
+
+  class UserSpecifications {
+    +hasUsername(String) : Specification<UserEntity>
+    +hasEmail(String) : Specification<UserEntity>
+    +hasRole(UUID) : Specification<UserEntity>
+    +build(UserFilter) : Specification<UserEntity>
+  }
+
+  interface UserMapper {
+    +toDTO(UserEntity) : UserDTO
+    +toEntity(UserCreateDTO) : UserEntity
+  }
+
+  UserController --> UserService
+  UserService --> UserRepository
+  UserService --> RoleRepository
+  UserService --> UserSpecifications
+  UserService --> UserMapper
+  UserRepository --> UserEntity
+  RoleRepository --> RoleEntity
+  UserEntity "many" -- "many" RoleEntity : has
+  UserMapper ..> UserDTO
+  UserMapper ..> UserEntity
+}
+
+' ══════════════════════════════════════════
+' PACKAGE: agents
+' ══════════════════════════════════════════
+package agents {
+
+  class AgentController {
+    +getAgents(AgentFilter, Pageable) : Page<AgentDTO>
+    +getAgentById(UUID) : AgentDTO
+    +assignGroup(UUID agentId, UUID groupId) : ResponseEntity<Void>
+    +removeGroup(UUID agentId, UUID groupId) : ResponseEntity<Void>
+    +deleteAgent(UUID) : ResponseEntity<Void>
+    +enableAgent(UUID) : AgentDTO
+    +disableAgent(UUID) : AgentDTO
+  }
+
+  class AgentService {
+    +findAll(AgentFilter, Pageable) : Page<AgentDTO>
+    +findById(UUID) : AgentDTO
+    +register(AgentRegisterDTO) : AgentDTO
+    +assignGroup(UUID agentId, UUID groupId) : void
+    +removeGroup(UUID agentId, UUID groupId) : void
+    +delete(UUID) : void
+    +updateLastConnection(UUID) : void
+  }
+
+  interface AgentRepository {
+    +findByIp(String) : Optional<AgentEntity>
+    +findByEnabled(boolean) : List<AgentEntity>
+    +findByGroupsId(UUID) : List<AgentEntity>
+  }
+
+  interface AgentGroupRepository {
+    +findByName(String) : Optional<AgentGroupEntity>
+    +findByAgentsId(UUID) : List<AgentGroupEntity>
+  }
+
+  class AgentEntity extends common.BaseEntity {
+    +ip : String
+    +hostname : String
+    +osName : String
+    +osVersion : String
+    +installDate : LocalDateTime
+    +latestConnection : LocalDateTime
+    +enabled : boolean
+    +groups : Set<AgentGroupEntity>
+  }
+
+  class AgentGroupEntity extends common.BaseEntity {
+    +name : String
+    +description : String
+    +agents : Set<AgentEntity>
+  }
+
+  class AgentDTO {
+    +id : UUID
+    +ip : String
+    +hostname : String
+    +osName : String
+    +osVersion : String
+    +enabled : boolean
+    +groups : List<String>
+  }
+
+  class AgentRegisterDTO {
+    +ip : String
+    +hostname : String
+    +osName : String
+    +osVersion : String
+  }
+
+  class AgentFilter {
+    +ip : String
+    +hostname : String
+    +osName : String
+    +enabled : Boolean
+    +groupId : UUID
+  }
+
+  class AgentSpecifications {
+    +hasIp(String) : Specification<AgentEntity>
+    +hasHostname(String) : Specification<AgentEntity>
+    +hasOsName(String) : Specification<AgentEntity>
+    +isEnabled(boolean) : Specification<AgentEntity>
+    +inGroup(UUID) : Specification<AgentEntity>
+    +build(AgentFilter) : Specification<AgentEntity>
+  }
+
+  interface AgentMapper {
+    +toDTO(AgentEntity) : AgentDTO
+    +toEntity(AgentRegisterDTO) : AgentEntity
+  }
+
+  AgentController --> AgentService
+  AgentService --> AgentRepository
+  AgentService --> AgentGroupRepository
+  AgentService --> AgentSpecifications
+  AgentService --> AgentMapper
+  AgentRepository --> AgentEntity
+  AgentGroupRepository --> AgentGroupEntity
+  AgentEntity "many" -- "many" AgentGroupEntity : belongsTo
+}
+
+' ══════════════════════════════════════════
+' PACKAGE: policies
+' ══════════════════════════════════════════
+package policies {
+
+  class PolicyController {
+    +getPolicies(PolicyFilter, Pageable) : Page<PolicySummaryDTO>
+    +getPolicyById(UUID) : PolicyDetailDTO
+    +createPolicy(PolicyCreateDTO) : ResponseEntity<PolicyDetailDTO>
+    +updatePolicy(UUID, PolicyUpdateDTO) : PolicyDetailDTO
+    +deletePolicy(UUID) : ResponseEntity<Void>
+    +assignToAgent(UUID policyId, UUID agentId) : ResponseEntity<Void>
+    +assignToGroup(UUID policyId, UUID groupId) : ResponseEntity<Void>
+    +getPoliciesByAgent(UUID agentId) : List<PolicySummaryDTO>
+  }
+
+  class PolicyService {
+    +findAll(PolicyFilter, Pageable) : Page<PolicySummaryDTO>
+    +findById(UUID) : PolicyDetailDTO
+    +create(PolicyCreateDTO) : PolicyDetailDTO
+    +update(UUID, PolicyUpdateDTO) : PolicyDetailDTO
+    +delete(UUID) : void
+    +assignToAgent(UUID, UUID) : void
+    +assignToGroup(UUID, UUID) : void
+    +getPoliciesByAgent(UUID) : List<PolicySummaryDTO>
+  }
+
+  interface PolicyRepository {
+    +findByName(String) : Optional<PolicyEntity>
+    +findBySeverity(Severity) : List<PolicyEntity>
+    +findByAgentsId(UUID) : List<PolicyEntity>
+    +findByGroupsId(UUID) : List<PolicyEntity>
+  }
+
+  class PolicyEntity extends common.BaseEntity {
+    +name : String
+    +version : String
+    +description : String
+    +severity : Severity
+    +elements : List<PolicyElementEntity>
+  }
+
+  class PolicyElementEntity extends common.BaseEntity {
+    +name : String
+    +checks : List<PolicyCheckEntity>
+  }
+
+  class PolicyCheckEntity extends common.BaseEntity {
+    +name : String
+    +rationale : String
+    +checkCommand : String
+    +regulationSections : Set<RegulationSectionEntity>
+    +remediations : List<PolicyRemediationEntity>
+  }
+
+  class PolicyRemediationEntity extends common.BaseEntity {
+    +name : String
+    +description : String
+    +remediationCommand : String
+  }
+
+  enum Severity {
+    CRITICAL
+    HIGH
+    MEDIUM
+    LOW
+  }
+
+  class PolicySummaryDTO {
+    +id : UUID
+    +name : String
+    +version : String
+    +severity : Severity
+  }
+
+  class PolicyDetailDTO {
+    +id : UUID
+    +name : String
+    +version : String
+    +description : String
+    +severity : Severity
+    +elements : List<PolicyElementDTO>
+  }
+
+  class PolicyCreateDTO {
+    +name : String
+    +version : String
+    +description : String
+    +severity : Severity
+  }
+
+  class PolicyUpdateDTO {
+    +version : String
+    +description : String
+    +severity : Severity
+  }
+
+  class PolicyElementDTO {
+    +id : UUID
+    +name : String
+    +checks : List<PolicyCheckDTO>
+  }
+
+  class PolicyCheckDTO {
+    +id : UUID
+    +name : String
+    +rationale : String
+    +remediations : List<PolicyRemediationDTO>
+  }
+
+  class PolicyRemediationDTO {
+    +id : UUID
+    +name : String
+    +description : String
+  }
+
+  class PolicyFilter {
+    +name : String
+    +severity : Severity
+    +assignedToAgentId : UUID
+    +assignedToGroupId : UUID
+  }
+
+  class PolicySpecifications {
+    +hasName(String) : Specification<PolicyEntity>
+    +hasSeverity(Severity) : Specification<PolicyEntity>
+    +assignedToAgent(UUID) : Specification<PolicyEntity>
+    +assignedToGroup(UUID) : Specification<PolicyEntity>
+    +build(PolicyFilter) : Specification<PolicyEntity>
+  }
+
+  PolicyController --> PolicyService
+  PolicyService --> PolicyRepository
+  PolicyService --> PolicySpecifications
+  PolicyEntity "1" *-- "many" PolicyElementEntity
+  PolicyElementEntity "1" *-- "many" PolicyCheckEntity
+  PolicyCheckEntity "1" *-- "many" PolicyRemediationEntity
+  PolicyDetailDTO "1" *-- "many" PolicyElementDTO
+  PolicyElementDTO "1" *-- "many" PolicyCheckDTO
+  PolicyCheckDTO "1" *-- "many" PolicyRemediationDTO
+}
+
+' ══════════════════════════════════════════
+' PACKAGE: regulations
+' ══════════════════════════════════════════
+package regulations {
+
+  class RegulationController {
+    +getRegulations(RegulationFilter, Pageable) : Page<RegulationSummaryDTO>
+    +getRegulationById(UUID) : RegulationDetailDTO
+    +createRegulation(RegulationCreateDTO) : ResponseEntity<RegulationDetailDTO>
+    +updateRegulation(UUID, RegulationUpdateDTO) : RegulationDetailDTO
+    +deleteRegulation(UUID) : ResponseEntity<Void>
+    +uploadPdf(UUID, MultipartFile) : ResponseEntity<Void>
+    +addSection(UUID, RegSectionCreateDTO) : RegulationDetailDTO
+  }
+
+  class RegulationService {
+    +findAll(RegulationFilter, Pageable) : Page<RegulationSummaryDTO>
+    +findById(UUID) : RegulationDetailDTO
+    +create(RegulationCreateDTO) : RegulationDetailDTO
+    +update(UUID, RegulationUpdateDTO) : RegulationDetailDTO
+    +delete(UUID) : void
+    +storePdf(UUID, MultipartFile) : String
+    +addSection(UUID, RegSectionCreateDTO) : RegulationDetailDTO
+  }
+
+  interface RegulationRepository {
+    +findByName(String) : Optional<RegulationEntity>
+    +findByNameContaining(String) : List<RegulationEntity>
+  }
+
+  interface RegSectionRepository {
+    +findByRegulationId(UUID) : List<RegulationSectionEntity>
+    +findByTitleContaining(String) : List<RegulationSectionEntity>
+  }
+
+  class RegulationEntity extends common.BaseEntity {
+    +name : String
+    +pdfPath : String
+    +sections : List<RegulationSectionEntity>
+  }
+
+  class RegulationSectionEntity extends common.BaseEntity {
+    +title : String
+    +checks : Set<PolicyCheckEntity>
+  }
+
+  class RegulationSummaryDTO {
+    +id : UUID
+    +name : String
+    +addedDate : LocalDateTime
+  }
+
+  class RegulationDetailDTO {
+    +id : UUID
+    +name : String
+    +pdfPath : String
+    +sections : List<RegSectionDTO>
+  }
+
+  class RegulationCreateDTO {
+    +name : String
+  }
+
+  class RegulationUpdateDTO {
+    +name : String
+  }
+
+  class RegSectionDTO {
+    +id : UUID
+    +title : String
+  }
+
+  class RegSectionCreateDTO {
+    +title : String
+  }
+
+  class RegulationFilter {
+    +name : String
+    +hasSectionWithTitle : String
+  }
+
+  class RegulationSpecifications {
+    +hasName(String) : Specification<RegulationEntity>
+    +hasSectionTitle(String) : Specification<RegulationEntity>
+    +build(RegulationFilter) : Specification<RegulationEntity>
+  }
+
+  RegulationController --> RegulationService
+  RegulationService --> RegulationRepository
+  RegulationService --> RegSectionRepository
+  RegulationService --> RegulationSpecifications
+  RegulationEntity "1" *-- "many" RegulationSectionEntity
+  PolicyCheckEntity "many" -- "many" RegulationSectionEntity : mapsTo
+}
+
+' ══════════════════════════════════════════
+' PACKAGE: risk_modeling
+' ══════════════════════════════════════════
+package risk_modeling {
+
+  class RiskController {
+    +getRisks(RiskFilter, Pageable) : Page<RiskDTO>
+    +getRiskById(UUID) : RiskDetailDTO
+    +createRisk(RiskCreateDTO) : ResponseEntity<RiskDTO>
+    +updateRisk(UUID, RiskUpdateDTO) : RiskDTO
+    +closeRisk(UUID) : RiskDTO
+    +acceptRisk(UUID) : RiskDTO
+    +linkPolicy(UUID riskId, UUID policyId) : ResponseEntity<Void>
+    +unlinkPolicy(UUID riskId, UUID policyId) : ResponseEntity<Void>
+  }
+
+  class RiskService {
+    +findAll(RiskFilter, Pageable) : Page<RiskDTO>
+    +findById(UUID) : RiskDetailDTO
+    +create(RiskCreateDTO) : RiskDTO
+    +update(UUID, RiskUpdateDTO) : RiskDTO
+    +close(UUID) : RiskDTO
+    +accept(UUID) : RiskDTO
+    +linkPolicy(UUID, UUID) : void
+    +unlinkPolicy(UUID, UUID) : void
+    +computeRiskLevel(BigDecimal, BigDecimal) : RiskLevel
+  }
+
+  interface RiskRepository {
+    +findByAgentId(UUID) : List<RiskEntity>
+    +findByStatus(RiskStatus) : List<RiskEntity>
+    +findByRiskLevel(RiskLevel) : List<RiskEntity>
+    +findByThreatId(UUID) : List<RiskEntity>
+  }
+
+  interface ThreatRepository {
+    +findByName(String) : Optional<ThreatEntity>
+    +findByCategory(String) : List<ThreatEntity>
+    +findBySeverityScoreGreaterThanEqual(BigDecimal) : List<ThreatEntity>
+  }
+
+  class ThreatController {
+    +getThreats(Pageable) : Page<ThreatDTO>
+    +getThreatById(UUID) : ThreatDTO
+    +createThreat(ThreatCreateDTO) : ResponseEntity<ThreatDTO>
+    +updateThreat(UUID, ThreatUpdateDTO) : ThreatDTO
+    +deleteThreat(UUID) : ResponseEntity<Void>
+  }
+
+  class ThreatService {
+    +findAll(Pageable) : Page<ThreatDTO>
+    +findById(UUID) : ThreatDTO
+    +create(ThreatCreateDTO) : ThreatDTO
+    +update(UUID, ThreatUpdateDTO) : ThreatDTO
+    +delete(UUID) : void
+  }
+
+  class ThreatEntity extends common.BaseEntity {
+    +name : String
+    +description : String
+    +category : String
+    +severityScore : BigDecimal
+  }
+
+  class RiskEntity extends common.BaseEntity {
+    +impact : BigDecimal
+    +probability : BigDecimal
+    +riskLevel : RiskLevel
+    +status : RiskStatus
+    +reviewDate : LocalDateTime
+    +acceptanceDate : LocalDateTime
+    +policies : Set<PolicyEntity>
+  }
+
+  enum RiskLevel {
+    CRITICAL
+    HIGH
+    MEDIUM
+    LOW
+  }
+
+  enum RiskStatus {
+    OPEN
+    ACCEPTED
+    TRANSFERRED
+    MITIGATED
+    MONITORING
+    CLOSED
+  }
+
+  class RiskDTO {
+    +id : UUID
+    +threatName : String
+    +agentHostname : String
+    +impact : BigDecimal
+    +riskLevel : RiskLevel
+    +status : RiskStatus
+  }
+
+  class RiskDetailDTO {
+    +id : UUID
+    +threat : ThreatDTO
+    +agent : AgentDTO
+    +impact : BigDecimal
+    +probability : BigDecimal
+    +riskLevel : RiskLevel
+    +status : RiskStatus
+    +policies : List<PolicySummaryDTO>
+    +createdDate : LocalDateTime
+  }
+
+  class RiskCreateDTO {
+    +threatId : UUID
+    +agentId : UUID
+    +impact : BigDecimal
+    +probability : BigDecimal
+  }
+
+  class RiskUpdateDTO {
+    +impact : BigDecimal
+    +probability : BigDecimal
+    +reviewDate : LocalDateTime
+  }
+
+  class RiskFilter {
+    +agentId : UUID
+    +status : RiskStatus
+    +riskLevel : RiskLevel
+    +threatId : UUID
+  }
+
+  class RiskSpecifications {
+    +byAgentId(UUID) : Specification<RiskEntity>
+    +byStatus(RiskStatus) : Specification<RiskEntity>
+    +byRiskLevel(RiskLevel) : Specification<RiskEntity>
+    +byThreatId(UUID) : Specification<RiskEntity>
+    +build(RiskFilter) : Specification<RiskEntity>
+  }
+
+  class ThreatDTO {
+    +id : UUID
+    +name : String
+    +category : String
+    +severityScore : BigDecimal
+  }
+
+  class ThreatCreateDTO {
+    +name : String
+    +description : String
+    +category : String
+    +severityScore : BigDecimal
+  }
+
+  class ThreatUpdateDTO {
+    +description : String
+    +category : String
+    +severityScore : BigDecimal
+  }
+
+  RiskController --> RiskService
+  ThreatController --> ThreatService
+  RiskService --> RiskRepository
+  RiskService --> ThreatRepository
+  RiskService --> PolicyRepository
+  RiskService --> RiskSpecifications
+  ThreatService --> ThreatRepository
+  RiskEntity --> ThreatEntity : involves
+  RiskEntity --> AgentEntity : affects
+  RiskEntity "many" -- "many" PolicyEntity : mitigatedBy
+}
+
+' ══════════════════════════════════════════
+' RELACIONES ENTRE PAQUETES (adicionales)
+' ══════════════════════════════════════════
+security.UserDetailsServiceImpl ..> users.UserRepository : uses
+
+@enduml

@@ -1,4 +1,4 @@
-package com.styxiner.complyx_api;
+package io.github.styxiner.complyx_api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
