@@ -47,6 +47,6 @@ public class AuthService {
     }
 
     public void logout(String token) {
-        // Falta de implementar
+        
     }
 }
