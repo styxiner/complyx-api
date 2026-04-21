@@ -15,19 +15,15 @@ import javax.crypto.SecretKey;
 
 @Component
 public class JwtUtil {
-	
-    private String secret;
-    private long expiration;
-    private long refreshExpiration;
-    
-    public JwtUtil(@Value("${jwt.secret}") String secret, @Value("${jwt.expiration}") long expiration, @Value("$jwt.refresh_expiration") long refreshExpiration) {
-    	this.secret = secret;
-    	this.expiration = expiration;
-    	this.refreshExpiration = refreshExpiration;
-    }
 
-    private SecretKey getKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
+    private final SecretKey key;
+    private final long expiration;
+    private final long refreshExpiration;
+
+    public JwtUtil(@Value("${jwt.secret}") String secret, @Value("${jwt.expiration}") long expiration, @Value("${jwt.refresh_expiration}") long refreshExpiration) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.expiration = expiration;
+        this.refreshExpiration = refreshExpiration;
     }
 
     public String generateToken(UserDetails userDetails) {
@@ -39,11 +35,16 @@ public class JwtUtil {
     }
 
     private String buildToken(String username, long expiration) {
-        return Jwts.builder().subject(username).issuedAt(new Date()).expiration(new Date(System.currentTimeMillis() + expiration)).signWith(getKey()).compact();
+        return Jwts.builder()
+                .subject(username)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(key)
+                .compact();
     }
 
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        return extractClaims(token).getSubject();
     }
 
     public boolean validateToken(String token, UserDetails user) {
@@ -51,12 +52,14 @@ public class JwtUtil {
     }
 
     public boolean isTokenExpired(String token) {
-        return extractClaim(token, Claims::getExpiration).before(new Date());
+        return extractClaims(token).getExpiration().before(new Date());
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> resolver) {
-        Claims claims = Jwts.parser().verifyWith(getKey()).build().parseSignedClaims(token).getPayload();
-
-        return resolver.apply(claims);
+    private Claims extractClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }
