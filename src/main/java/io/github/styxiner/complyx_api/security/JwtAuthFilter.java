@@ -2,7 +2,6 @@ package io.github.styxiner.complyx_api.security;
 
 import java.io.IOException;
 
-import org.springframework.http.HttpRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +25,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        String path = request.getServletPath();
+
+        if (path.startsWith("/auth") ||
+            path.startsWith("/swagger-ui") ||
+            path.startsWith("/v3/api-docs")) {
+
+            chain.doFilter(request, response);
+            return;
+        }
 
         String token = extractToken(request);
 
@@ -38,6 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 if (jwtUtil.validateToken(token, user)) {
                     UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             }
@@ -51,7 +60,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (header != null && header.startsWith("Bearer ")) {
             return header.substring(7);
-        }
+        }        
+        
         return null;
     }
 }

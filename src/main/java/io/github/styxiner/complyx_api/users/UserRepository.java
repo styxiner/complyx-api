@@ -1,10 +1,18 @@
 package io.github.styxiner.complyx_api.users;
 
 import java.util.Optional;
+import java.util.UUID;
 
-public interface UserRepository {
-	Optional<UserEntity> findByUsername(String username);
-	Optional<UserEntity> findByEmail(String email);
-	boolean existsByUsername(String username);
-	boolean existsByEmail(String email);
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserRepository extends JpaRepository<UserEntity, UUID>, JpaSpecificationExecutor<UserEntity> {
+
+    Optional<UserEntity> findByUsername(String username);
+    Optional<UserEntity> findByEmail(String email);
+
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
 }
