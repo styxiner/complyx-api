@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final AuthService authService;
@@ -22,14 +22,29 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(dto));
     }
 
+    // Esto no funcionaba 
+/*
     @PostMapping("/refresh")
     public ResponseEntity<TokenResponseDTO> refresh(@RequestBody String token) {
         return ResponseEntity.ok(authService.refreshToken(token));
     }
+*/    
+    @PostMapping("/refresh")
+    public ResponseEntity<TokenResponseDTO> refresh(@RequestBody RefreshRequestDTO dto) {
+        return ResponseEntity.ok(authService.refreshToken(dto.getRefreshToken()));
+    }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String header) {
+
+    	String token = header.replace("Bearer ", "");
+    	
+    	if (header == null || !header.startsWith("Bearer ")) {
+    		return ResponseEntity.badRequest().build();
+    	}
+        
         authService.logout(token);
+
         return ResponseEntity.ok().build();
     }
 }
