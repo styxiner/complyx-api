@@ -501,6 +501,8 @@ Hay dos tipos de token:
 | `accessToken` | Corta (ej. 15 minutos) | Autorizar peticiones a la API |
 | `refreshToken` | Larga (ej. 7 días) | Obtener un nuevo accessToken sin volver a pedir credenciales |
 
+Uno de los posibles defectos que puede tener la API con este tipo de planteamiento, es que no hay un mecanismo real para invalidar el token antes de que termine su duración (logout). Al no implementar un mecanismo de lista negra, lo que habrá que hacer en el front es que al llamar al endpoint de cierre de sesión, descartar el token.
+
 ### Componentes de seguridad
 
 ```
