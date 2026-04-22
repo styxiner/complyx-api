@@ -19,17 +19,19 @@ public class AuthService {
     }
 
     public TokenResponseDTO login(LoginDTO dto) {
+	try {
+		authManager.authenticate(new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword()));
 
-        authManager.authenticate(
-            new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword())
-        );
+	        UserDetails user = uds.loadUserByUsername(dto.getUsername());
 
-        UserDetails user = uds.loadUserByUsername(dto.getUsername());
+	        String access = jwtUtil.generateToken(user);
+	        String refresh = jwtUtil.generateRefreshToken(user);
 
-        String access = jwtUtil.generateToken(user);
-        String refresh = jwtUtil.generateRefreshToken(user);
+	        return new TokenResponseDTO(access, refresh, 3600);
+	} catch (Exception e) {
+		throw new RuntimeException("Credenciales inválidas");
+	}
 
-        return new TokenResponseDTO(access, refresh, 3600);
     }
 
     public TokenResponseDTO refreshToken(String refreshToken) {
