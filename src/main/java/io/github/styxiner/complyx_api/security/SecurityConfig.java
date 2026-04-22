@@ -44,7 +44,12 @@ public class SecurityConfig {
         .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authenticationProvider(authenticationProvider())
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/auth/**", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
+            .requestMatchers("/api/auth/**", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
+	    .requestMatchers("/api/users/**").hasRole("ADMIN")
+	    .requestMatchers("/api/agents/**").hasAnyRole("ADMIN", "TECNICO")
+	    // Completar. Tambien podemos hacerlo más granular por metodos como
+	    // .requestMatchers(HttpMethod.GET, "/api/agents/**").hasAnyRole("ADMIN", "TECNICO")
+	    // .requestMatchers(HttpMethod.DELETE, "/api/agents/**").hasAnyRole("ADMIN")
             .anyRequest().authenticated()
         )
         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
