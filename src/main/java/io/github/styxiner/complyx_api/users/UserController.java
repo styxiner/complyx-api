@@ -15,6 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -25,13 +30,26 @@ public class UserController {
 		this.userService = service;
 	}
 	
-	// En swagger no funciona porque swagger interpreta sort como un array JSON en vez de una query de parametros repetibles 
+	// En swagger no funciona porque swagger interpreta sort como un array JSON en vez de una query de parametros repetibles
+	// Al final se soluciona cambiando el formato de parámetros para que no tenga que ser array
+	/*
 	@GetMapping()
 	Page<UserDTO> getAllUsers(@ParameterObject UserFilter filter, Pageable pageable) {
 		return userService.getAllUsers(filter, pageable);
+	}*/
+	@GetMapping()
+	@Parameters({
+	    @Parameter(name = "page", in = ParameterIn.QUERY, schema = @Schema(type = "integer", defaultValue = "0")),
+	    @Parameter(name = "size", in = ParameterIn.QUERY, schema = @Schema(type = "integer", defaultValue = "20")),
+	    @Parameter(name = "sort", in = ParameterIn.QUERY, description = "field,direction — e.g. username,asc",
+	               schema = @Schema(type = "string"), example = "username,asc")
+	})
+	Page<UserDTO> getAllUsers(@ParameterObject UserFilter filter, @Parameter(hidden = true) Pageable pageable
+	) {
+	    return userService.getAllUsers(filter, pageable);
 	}
 	
-	@GetMapping("{id}")
+	@GetMapping("{userId}")
 	UserDTO getUserById(@PathVariable UUID userId) {
 		return userService.getUserById(userId);
 	}
@@ -48,21 +66,21 @@ public class UserController {
 		return userService.update(userUpdateDto);
 	}
 	
-	@DeleteMapping("{id}")
+	@DeleteMapping("{userId}")
 	ResponseEntity<Void> deleteUser(@PathVariable UUID userId) {
 		userService.delete(userId);
 		
 		return ResponseEntity.noContent().build();
 	}
 	
-	@PostMapping("{id}/roles/{roleId}")
+	@PostMapping("{userId}/roles/{roleId}")
 	ResponseEntity<Void> assignRole(@PathVariable UUID userId, @PathVariable UUID roleId) {
 		userService.assignRole(userId, roleId);
 		
 		return ResponseEntity.ok().build();
 	}
 	
-	@DeleteMapping("{id}/roles/{roleId}")
+	@DeleteMapping("{userId}/roles/{roleId}")
 	ResponseEntity<Void> removeRole(@PathVariable UUID userId, @PathVariable UUID roleId) {
 		userService.unassignRole(userId, roleId);
 		

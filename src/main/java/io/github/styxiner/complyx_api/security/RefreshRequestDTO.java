@@ -5,7 +5,6 @@ public class RefreshRequestDTO {
     private String refreshToken;
 
 	public RefreshRequestDTO(String refreshToken) {
-		super();
 		this.refreshToken = refreshToken;
 	}
 

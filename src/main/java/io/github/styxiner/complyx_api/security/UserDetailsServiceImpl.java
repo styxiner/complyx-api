@@ -1,7 +1,9 @@
 package io.github.styxiner.complyx_api.security;
 
-import io.github.styxiner.complyx_api.users.UserEntity;
-import io.github.styxiner.complyx_api.users.UserRepository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -10,7 +12,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import io.github.styxiner.complyx_api.users.RoleEntity;
+import io.github.styxiner.complyx_api.users.UserEntity;
+import io.github.styxiner.complyx_api.users.UserRepository;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -23,19 +27,26 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-      
-        List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> (GrantedAuthority)
-                        new SimpleGrantedAuthority("ROLE_" + role.getRoleName()))
-                .toList();
+        UserEntity user = userRepository.findByUsername(username).orElseThrow(new Supplier<RuntimeException>() {
+        	
+			@Override
+			public RuntimeException get() {
+				return new RuntimeException("user does not exist");
+			}
+        	
+        });
 
-        return User.builder()
-                .username(user.getUsername())
-                .password(user.getPasswordHash())
-                .authorities(authorities)
-                .disabled(!user.isEnabled())
-                .build();
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        for (RoleEntity role : user.getRoles()) {
+        	// La convención de SpringSecurity por defecto necesita lo de "ROLE_"
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
+        }
+
+        boolean enabled = user.isEnabled();
+        boolean accountNonExpired = true;
+        boolean credentialsNonExpired = true;
+        boolean accountNonLocked = true;
+
+        return new User(user.getUsername(), user.getPasswordHash(), enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
     }
 }
