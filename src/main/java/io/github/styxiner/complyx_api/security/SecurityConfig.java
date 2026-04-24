@@ -38,22 +38,33 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         JwtAuthFilter jwtFilter = new JwtAuthFilter(jwtUtil, userDetailsService);
-
-        http
-        .csrf(csrf -> csrf.disable())
-        .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authenticationProvider(authenticationProvider())
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/auth/**", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
-	    .requestMatchers("/api/users/**").hasRole("ADMIN")
-	    .requestMatchers("/api/agents/**").hasAnyRole("ADMIN", "TECNICO")
-	    // Completar. Tambien podemos hacerlo más granular por metodos como
-	    // .requestMatchers(HttpMethod.GET, "/api/agents/**").hasAnyRole("ADMIN", "TECNICO")
-	    // .requestMatchers(HttpMethod.DELETE, "/api/agents/**").hasAnyRole("ADMIN")
-            .anyRequest().authenticated()
-        )
-        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
+        
+        http.csrf().disable();
+        
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        
+        http.authenticationProvider(authenticationProvider());
+        
+        http.authorizeHttpRequests()
+        // endpoints publicos
+        	.requestMatchers("/api/auth/login").permitAll()
+        	.requestMatchers("/v3/api-docs/**").permitAll()
+        	.requestMatchers("/swagger-ui/**").permitAll()
+        	.requestMatchers("/swagger-ui.html").permitAll()
+        	
+        	// enpoints que necesitan autenticación
+        	.requestMatchers("/api/auth/refresh").authenticated()
+        	.requestMatchers("/api/auth/logout").authenticated()
+        	
+        	// endpoints que necesitan roles concretos
+        	.requestMatchers("/api/users/**").hasRole("ADMIN")
+        	.requestMatchers("/api/agents/**").hasAnyRole("ADMIN", "TECNICO")
+        	
+        	// filtro general independiente de los roles
+        	.anyRequest().authenticated();
+        
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        
         return http.build();
     }
 
