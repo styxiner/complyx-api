@@ -29,8 +29,6 @@ public class JwtUtil {
         this.refreshExpiration = refreshExpiration;
     }
 
-    // ---------------- TOKENS ----------------
-
     public String generateToken(UserDetails userDetails) {
         return buildToken(userDetails.getUsername(), expiration);
     }
@@ -48,14 +46,10 @@ public class JwtUtil {
                 .compact();
     }
 
-    // ---------------- EXTRACTION ----------------
-
     public String extractUsername(String token) {
         Claims claims = extractAllClaims(token);
         return claims != null ? claims.getSubject() : null;
     }
-
-    // ---------------- VALIDATION ----------------
 
     public boolean validateToken(String token, UserDetails userDetails) {
         Claims claims = extractAllClaims(token);
@@ -74,8 +68,6 @@ public class JwtUtil {
         Claims claims = extractAllClaims(token);
         return claims == null || claims.getExpiration().before(new Date());
     }
-
-    // ---------------- INTERNAL PARSER ----------------
 
     private Claims extractAllClaims(String token) {
         try {
