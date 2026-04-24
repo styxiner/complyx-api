@@ -1,23 +1,12 @@
 package io.github.styxiner.complyx_api.users;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public interface UserMapper {
-	
-	@Mapping(target = "roles", source = "roles")
-	UserDTO toDTO(UserEntity user);
-	
-	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "passwordHash", ignore = true)
-	@Mapping(target = "enabled", ignore = true)
-	@Mapping(target = "roles", ignore = true)
-	UserEntity toEntity(UserCreateDTO userCreateDto);
-
+public interface RoleMapper {
+	RoleDTO toDTO(RoleEntity role);
+	RoleEntity toEntity(RoleCreateDTO role);
+/*	
 	// Entity a DTO
 	default Set<String> mapRoles(Set<RoleEntity> roles) {
 		if (roles == null) {
@@ -49,4 +38,5 @@ public interface UserMapper {
 		
 		return result;
 	}
+*/
 }
