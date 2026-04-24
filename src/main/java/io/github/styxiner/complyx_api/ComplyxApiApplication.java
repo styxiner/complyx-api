@@ -44,7 +44,7 @@ public class ComplyxApiApplication implements CommandLineRunner {
 	        String passwordHash = new BCryptPasswordEncoder().encode("contraseña");
 	        Set<RoleEntity> roles = new HashSet<>();
 	        roles.add(adminRole);
-	        UserEntity testUser = new UserEntity(null, "admin", "admin@complyx.local", passwordHash, true, roles);
+	        UserEntity testUser = new UserEntity("admin", "admin@complyx.local", passwordHash, true, roles);
 	        userRepository.save(testUser);
 	        System.out.println("Test user created!");
 	    } else {
