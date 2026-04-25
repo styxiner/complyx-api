@@ -30,16 +30,15 @@ public class ComplyxApiApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         // Crear o recuperar roles
-        RoleEntity adminRole = getOrCreateRole("admin");
-        RoleEntity tecnicoRole = getOrCreateRole("tecnico");
-        RoleEntity auditorRole = getOrCreateRole("auditor");
-        RoleEntity tecnicoAuditorRole = getOrCreateRole("tecnico_auditor");
+        RoleEntity adminRole = getOrCreateRole("ADMIN");
+        RoleEntity tecnicoRole = getOrCreateRole("TECNICO");
+        RoleEntity auditorRole = getOrCreateRole("AUDITOR");
 
         // Crear usuarios
         createUserIfNotExists("admin", "admin@complyx.local", "admin", Set.of(adminRole));
         createUserIfNotExists("tecnico", "tecnico@complyx.local", "tecnico", Set.of(tecnicoRole));
         createUserIfNotExists("auditor", "auditor@complyx.local", "auditor", Set.of(auditorRole));
-        createUserIfNotExists("tecnico_auditor", "tecnico_auditor@complyx.local", "tecnico_auditor", Set.of(tecnicoAuditorRole));
+        createUserIfNotExists("tecnico_auditor", "tecnico_auditor@complyx.local", "tecnico_auditor", Set.of(tecnicoRole, auditorRole));
     }
     
     // Método reutilizable para crear roles
