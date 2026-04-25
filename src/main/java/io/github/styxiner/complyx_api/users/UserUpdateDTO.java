@@ -31,7 +31,6 @@ public class UserUpdateDTO {
 		this.username= username;
 	}
 
-	
 	public String getEmail() {
 		return email;
 	}
