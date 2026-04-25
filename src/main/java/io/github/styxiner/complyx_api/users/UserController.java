@@ -2,7 +2,6 @@ package io.github.styxiner.complyx_api.users;
 
 import java.util.UUID;
 
-<<<<<<< HEAD
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
