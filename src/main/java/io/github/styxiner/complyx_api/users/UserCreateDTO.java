@@ -39,8 +39,4 @@ public class UserCreateDTO {
 	public void setRoleIds(Set<UUID> roleIds) {
 		this.roleIds = roleIds;
 	}
-	
-	
-	
-	
 }

@@ -2,6 +2,7 @@ package io.github.styxiner.complyx_api.users;
 
 import java.util.UUID;
 
+<<<<<<< HEAD
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,14 +45,14 @@ public class UserController {
 	    @Parameter(name = "sort", in = ParameterIn.QUERY, description = "field,direction — e.g. username,asc",
 	               schema = @Schema(type = "string"), example = "username,asc")
 	})
-	Page<UserDTO> getAllUsers(@ParameterObject UserFilter filter, @Parameter(hidden = true) Pageable pageable
-	) {
+	Page<UserDTO> getAllUsers(@ParameterObject UserFilter filter, @Parameter(hidden = true) Pageable pageable) {
 	    return userService.getAllUsers(filter, pageable);
 	}
 	
 	@GetMapping("{userId}")
 	UserDTO getUserById(@PathVariable UUID userId) {
-		return userService.getUserById(userId);
+
+    return userService.getUserById(userId);
 	}
 	
 	@PostMapping()
