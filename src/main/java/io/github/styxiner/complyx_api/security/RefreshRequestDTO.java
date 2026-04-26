@@ -2,10 +2,9 @@ package io.github.styxiner.complyx_api.security;
 
 public class RefreshRequestDTO {
 
-    private String refreshToken;
+  private String refreshToken;
 
 	public RefreshRequestDTO(String refreshToken) {
-		super();
 		this.refreshToken = refreshToken;
 	}
 
@@ -16,7 +15,4 @@ public class RefreshRequestDTO {
 	public void setRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
 	}
-
-    
-
 }
