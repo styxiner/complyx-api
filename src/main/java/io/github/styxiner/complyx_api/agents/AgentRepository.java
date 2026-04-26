@@ -15,5 +15,5 @@ JpaSpecificationExecutor<AgentEntity> {			//soporte para filtros dinamicos
 
 	Optional<AgentEntity> findByIp(String ip);
 
-	boolean existByIp(String ip);
+	boolean existsByIp(String ip);
 }
