@@ -25,34 +25,26 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        String path = request.getServletPath();
-
-        if (path.startsWith("/api/auth/login") ||
-            path.startsWith("/swagger-ui") ||
-            path.startsWith("/v3/api-docs")) {
-
-            chain.doFilter(request, response);
-            return;
-        }
-
-        String token = extractToken(request);
-
-        if (token != null) {
-            String username = jwtUtil.extractUsername(token);
-
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-                UserDetails user = userDetailsService.loadUserByUsername(username);
-
-                if (jwtUtil.validateToken(token, user)) {
-                    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-
-                    SecurityContextHolder.getContext().setAuthentication(auth);
-                }
-            }
-        }
-
-        chain.doFilter(request, response);
+    	String token = extractToken(request);
+    	
+    	// Por el momento, no distingue en el tipo de token. Solo valida la firma y la expiración. 
+    	// Así que no distingue de momento entre token de acceso o de validación.
+    	
+    	if (token != null) {
+    		String username = jwtUtil.extractUsername(token);
+    		
+    		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+    			UserDetails user = userDetailsService.loadUserByUsername(username);
+    			
+    			if (jwtUtil.validateToken(token, user)) {
+    				UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+    				
+    				SecurityContextHolder.getContext().setAuthentication(auth);
+    			}
+    		}
+    	}
+    	
+    	chain.doFilter(request, response);
     }
 
     private String extractToken(HttpServletRequest request) {
