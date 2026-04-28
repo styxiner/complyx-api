@@ -10,7 +10,8 @@ public class AgentFilter {
 	private String hostname;
 	private String osName;
 	private Boolean enabled;
-	UUID groupId;
+	private UUID groupId;
+	
 	public String getIp() {
 		return ip;
 	}

@@ -8,6 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import jakarta.validation.Valid;
 
 @Service
 @Transactional(readOnly = true)
@@ -40,18 +43,13 @@ public class AgentService {
 
 // Registra un nuevo agente validando que la IP sea única y asignando valores iniciales.
 	@Transactional
-	public AgentDTO register(AgentRegisterDTO agentRegisterDTO) { // Convertimos el DTO de registro en una Entidad de
+	public AgentDTO register(@Valid @RequestBody AgentRegisterDTO agentRegisterDTO) { // Convertimos el DTO de registro en una Entidad de
 																	// base de datos dado que manipulamos la BD es
 																	// necesario @Transaccional
 		if (agentRepository.existsByIp(agentRegisterDTO.getIp())) {
 			throw new RuntimeException("Agent with this IP already exists");
 		}
-
 		AgentEntity agent = agentMapper.toEntity(agentRegisterDTO);
-		agent.setEnabled(true);
-		agent.setInstallDate(LocalDateTime.now());
-		agent.setLatestConnection(LocalDateTime.now());
-
 		AgentEntity saved = agentRepository.save(agent);
 
 		return agentMapper.toDTO(saved);
@@ -66,10 +64,11 @@ public class AgentService {
 				.orElseThrow(() -> new RuntimeException("Group not found"));
 // Buscamos ambos objetos. Si alguno falla, se cancela la operación.
 		agent.addGroup(group);
-		agentRepository.save(agent);
-//Añadimos el grupo y persistimos el cambio
+		agentRepository.save(agent);//Añadimos el grupo y persistimos el cambio
 	}
+	
 // Desvincula un agente de un grupo específico.
+	@Transactional
 	void removeGroup(UUID agentId, UUID groupId) {
 		AgentEntity agent = agentRepository.findById(agentId)
 				.orElseThrow(() -> new RuntimeException("Agent not found"));
