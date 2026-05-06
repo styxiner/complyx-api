@@ -75,7 +75,7 @@ public class PolicyController {
     @DeleteMapping("/{policyId}")
     @Operation(summary = "Eliminar una política")
     @ApiResponses({ 
-        @ApiResponse(responseCode = "204", description = "Política eliminada correctamente"),
+        @ApiResponse(responseCode = "204", description = "Politica eliminada correctamente"),
         @ApiResponse(responseCode = "404", description = "Política no encontrada") 
     })
 	public ResponseEntity<Void> deletePolicy(@PathVariable UUID policyId) {
@@ -88,8 +88,8 @@ public class PolicyController {
     @PostMapping("/{policyId}/agents/{agentId}")
     @Operation(summary = "Asiganar un agente")
     @ApiResponses({ 
-        @ApiResponse(responseCode = "204", description = "Política eliminada correctamente"),
-        @ApiResponse(responseCode = "404", description = "Política no encontrada") 
+        @ApiResponse(responseCode = "204", description = "Agente asignado correctamente"),
+        @ApiResponse(responseCode = "404", description = "Politica o Agente no encontrado") 
     })
 	public ResponseEntity<Void> assignToAgent(@PathVariable UUID policyId, @PathVariable UUID agentId) {
 
@@ -101,8 +101,8 @@ public class PolicyController {
     @DeleteMapping("/{policyId}/agents/{agentId}")
     @Operation(summary = "Desasignar agente")
     @ApiResponses({ 
-        @ApiResponse(responseCode = "204", description = "Política eliminada correctamente"),
-        @ApiResponse(responseCode = "404", description = "Política no encontrada") 
+        @ApiResponse(responseCode = "204", description = "Agente asignado correctamente"),
+        @ApiResponse(responseCode = "404", description = "Politica o Agente no encontrado") 
     })
 	public ResponseEntity<Void> unAssignToAgent(@PathVariable UUID policyId, @PathVariable UUID agentId) {
 
@@ -113,8 +113,8 @@ public class PolicyController {
 	@PostMapping("/{policyId}/groups/{groupId}")
     @Operation(summary = "Asignar un grupo de agentes")
     @ApiResponses({ 
-        @ApiResponse(responseCode = "204", description = "Política eliminada correctamente"),
-        @ApiResponse(responseCode = "404", description = "Política no encontrada") 
+        @ApiResponse(responseCode = "204", description = "Grupo asignado correctamente"),
+        @ApiResponse(responseCode = "404", description = "Politica o Grupo no encontrado") 
     })
 	
 	public ResponseEntity<Void> assignToGroup(@PathVariable UUID policyId, @PathVariable UUID groupId) {
@@ -127,8 +127,8 @@ public class PolicyController {
     @DeleteMapping("/{policyId}/groups/{groupId}")
 	@Operation(summary = "Desasignar un grupo de agentes")
     @ApiResponses({ 
-        @ApiResponse(responseCode = "204", description = "Política eliminada correctamente"),
-        @ApiResponse(responseCode = "404", description = "Política no encontrada") 
+        @ApiResponse(responseCode = "204", description = "Grupo desasignado correctamente"),
+        @ApiResponse(responseCode = "404", description = "Politica o grupo no encontrado") 
     })
 	public ResponseEntity<Void> unAssignToGroup(@PathVariable UUID policyId, @PathVariable UUID groupId) {
 
@@ -139,8 +139,8 @@ public class PolicyController {
 	// GET BY AGENT
     @Operation(summary = "Conseguir politica por su agente")
     @ApiResponses({ 
-        @ApiResponse(responseCode = "204", description = "Política eliminada correctamente"),
-        @ApiResponse(responseCode = "404", description = "Política no encontrada") 
+        @ApiResponse(responseCode = "204", description = "Lista de politicas obtenida correctamente"),
+        @ApiResponse(responseCode = "404", description = "Agente no encontrado") 
     })
 	@GetMapping("/agent/{agentId}")
 	public ResponseEntity<List<PolicySummaryDTO>> getPoliciesByAgent(@PathVariable UUID agentId) {

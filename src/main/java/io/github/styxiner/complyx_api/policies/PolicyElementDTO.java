@@ -1,11 +1,11 @@
-package io.github.styxiner.complyx_api.policies;
+Ôªøpackage io.github.styxiner.complyx_api.policies;
 
 import java.util.List;
 import java.util.UUID;
 import io.swagger.v3.oas.annotations.media.Schema;
 /*
  * DTO que representa un elemento dentro de una Policy.
- * Contiene informaciÛn b·sica y la lista de checks asociados.
+ * Contiene informaci√≥n b√°sica y la lista de checks asociados.
  */
 @Schema(description = "Elemento dentro de una policy")
 public class PolicyElementDTO {

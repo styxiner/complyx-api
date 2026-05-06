@@ -1,10 +1,9 @@
-package io.github.styxiner.complyx_api.policies;
+锘縫ackage io.github.styxiner.complyx_api.policies;
 
 import java.util.List;
 import java.util.UUID;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /*
@@ -15,13 +14,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class PolicyCheckDTO {
 	private UUID id;
 	private String name;
-	@Schema(description = "Justificaci髇 t閏nica o normativa del chequeo")
-	private String rationale;	@Schema(description = "Comando o script t閏nico que ejecuta la validaci髇")
+	@Schema(description = "Justificaci贸n t茅cnica o normativa del chequeo")
+	private String rationale;	@Schema(description = "Comando o script t茅cnico que ejecuta la validaci贸n")
 	private String checkCommand;
-	@Schema(description = "Lista de acciones de remediaci髇")
+	@Schema(description = "Lista de acciones de remediaci贸n")
 	@Valid
 	private List<PolicyRemediationDTO> remediations;
-	@Schema(description = "IDs de las secciones de regulaci髇 asociadas")
+	@Schema(description = "IDs de las secciones de regulaci贸n asociadas")
 	private List<UUID> regulationSectionIds;
 
 	public PolicyCheckDTO() {

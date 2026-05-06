@@ -1,4 +1,4 @@
-package io.github.styxiner.complyx_api.policies;
+﻿package io.github.styxiner.complyx_api.policies;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class PolicyCheckEntity {
 
 	@Column(name = "created_date", nullable = false, updatable = false)
 	private LocalDateTime createdDate;
-//este es el due�o de la relacion, es el lado que tiene la FK
+//este es el dueño de la relacion, es el lado que tiene la FK
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "policy_element_id", nullable = false)
 	private PolicyElementEntity policyElement;
@@ -48,7 +48,7 @@ public class PolicyCheckEntity {
 	@JoinTable(name = "check_regulation_sections", joinColumns = @JoinColumn(name = "check_id"), inverseJoinColumns = @JoinColumn(name = "regulation_section_id"))
 	private Set<RegulationSectionEntity> regulationSections = new HashSet<>();
 	/*
-	 * No reemplazar la colecci�n directamente. Usar
+	 * No reemplazar la colección directamente. Usar
 	 * addRemediation/removeRemediation.
 	 */
 	@OneToMany(mappedBy = "policyCheck", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -132,21 +132,21 @@ public class PolicyCheckEntity {
 		this.remediations = remediations;
 	}
 
-	// A�ade una remediation manteniendo la relaci�n bidireccional .
+	// Añade una remediation manteniendo la relación bidireccional .
 
 	public void addRemediation(PolicyRemediationEntity remediation) {
 		remediations.add(remediation);
 		remediation.setPolicyCheck(this);
 	}
 
-	// Elimina una remediation y gracias a orphanRemoval (DELETE autom�tico en BD).
+	// Elimina una remediation y gracias a orphanRemoval (DELETE automático en BD).
 
 	public void removeRemediation(PolicyRemediationEntity remediation) {
 		remediations.remove(remediation);
 		remediation.setPolicyCheck(null);
 	}
 
-	// A�ade una regulation section.
+	// Añade una regulation section.
 
 	public void addRegulationSection(RegulationSectionEntity section) {
 		regulationSections.add(section);
@@ -156,7 +156,7 @@ public class PolicyCheckEntity {
 		regulationSections.remove(section);
 	}
 
-	// Se ejecuta autom�ticamente antes del INSERT.Garantiza consistencia sin
+	// Se ejecuta automáticamente antes del INSERT.Garantiza consistencia sin
 	// depender del Service.
 
 	@PrePersist

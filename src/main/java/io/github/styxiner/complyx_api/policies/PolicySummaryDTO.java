@@ -1,10 +1,10 @@
-package io.github.styxiner.complyx_api.policies;
+Ôªøpackage io.github.styxiner.complyx_api.policies;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 import io.swagger.v3.oas.annotations.media.Schema;
-/*Clase para mostrar informaciÛn ligera, r·pida y suficiente
- * para listar policies, sin cargar toda la jerarquÌa.
+/*Clase para mostrar informaci√≥n ligera, r√°pida y suficiente
+ * para listar policies, sin cargar toda la jerarqu√≠a.
  */
 @Schema(description = "Resumen de una policy para listados")
 public class PolicySummaryDTO {

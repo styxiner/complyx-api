@@ -1,4 +1,4 @@
-package io.github.styxiner.complyx_api.policies;
+Ôªøpackage io.github.styxiner.complyx_api.policies;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.UUID;
 import io.swagger.v3.oas.annotations.media.Schema;
 /* DTO de salida que representa el detalle completo de una Policy.
  * Se utiliza en el endpoint GET /policies/{id} y contiene toda la estructura
- * jer·rquica asociada a la policy necesarias para visualizar o editar una policy en profundidad.
+ * jer√°rquica asociada a la policy necesarias para visualizar o editar una policy en profundidad.
  */
 @Schema(description = "Detalle completo de una policy")
 public class PolicyDetailDTO {
@@ -18,9 +18,9 @@ public class PolicyDetailDTO {
 	private String status;
     @Schema(description = "Severidad global de la policy")
 	private Severity severity;
-    @Schema(description = "Fecha de creaciÛn de la policy")
+    @Schema(description = "Fecha de creaci√≥n de la policy")
 	private LocalDateTime createdAt;
-    @Schema(description = "Lista jer·rquica de elementos de la policy")
+    @Schema(description = "Lista jer√°rquica de elementos de la policy")
 	private List<PolicyElementDTO> elements;
 
 	public PolicyDetailDTO() {

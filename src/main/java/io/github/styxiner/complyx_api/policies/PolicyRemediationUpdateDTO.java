@@ -1,4 +1,4 @@
-package io.github.styxiner.complyx_api.policies;
+锘縫ackage io.github.styxiner.complyx_api.policies;
 
 import java.util.UUID;
 
@@ -6,10 +6,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
 /*
- * DTO de actualizaci髇 de una remediaci髇.
- * Representa la acci髇 correctiva asociada a un check.
+ * DTO de actualizaci贸n de una remediaci贸n.
+ * Representa la acci贸n correctiva asociada a un check.
  */
-@Schema(description = "Datos para actualizar una remediaci髇 existente")
+@Schema(description = "Datos para actualizar una remediaci贸n existente")
 public class PolicyRemediationUpdateDTO {
     private UUID id;
     @NotBlank
@@ -17,7 +17,7 @@ public class PolicyRemediationUpdateDTO {
     @NotBlank
     private String description;
     @NotBlank
-    @Schema(description = "Comando t閏nico de remediaci髇")
+    @Schema(description = "Comando t茅cnico de remediaci贸n")
     private String remediationCommand;
 	public UUID getId() {
 		return id;

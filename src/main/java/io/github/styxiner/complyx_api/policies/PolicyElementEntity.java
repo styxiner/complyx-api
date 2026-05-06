@@ -1,4 +1,4 @@
-package io.github.styxiner.complyx_api.policies;
+Ôªøpackage io.github.styxiner.complyx_api.policies;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +24,12 @@ public class PolicyElementEntity {
 
 	@Column(nullable = false)
 	private String name;
-//@JoinColum indica que aquÌ se guarda la FK e hibernate usa este lado para persistir la relaciÛn
+//@JoinColum indica que aqu√≠ se guarda la FK e hibernate usa este lado para persistir la relaci√≥n
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "policy_id", nullable = false)
 	private PolicyEntity policy;
 	/*
-	 * NO reemplazar la colecciÛn directamente. Usar addCheck/removeCheck para
+	 * NO reemplazar la colecci√≥n directamente. Usar addCheck/removeCheck para
 	 * mantener consistencia.
 	 */
 	@OneToMany(mappedBy = "policyElement", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -75,8 +75,8 @@ public class PolicyElementEntity {
 	}
 
 	/*
-	 * AÒade un PolicyCheck manteniendo sincronizada la relaciÛn bidireccional. Se
-	 * aÒade al listado (lado padre),se asigna este element como owner en el hijo
+	 * A√±ade un PolicyCheck manteniendo sincronizada la relaci√≥n bidireccional. Se
+	 * a√±ade al listado (lado padre),se asigna este element como owner en el hijo
 	 * para que Hibernate gestiona correctamente la FK.
 	 */
 	public void addCheck(PolicyCheckEntity check) {
@@ -85,8 +85,8 @@ public class PolicyElementEntity {
 	}
 
 	/*
-	 * Elimina un PolicyCheck manteniendo la relaciÛn consistente. gracias
-	 * CascadeType.ALL:El check se persistir· autom·ticamente al guardar el
+	 * Elimina un PolicyCheck manteniendo la relaci√≥n consistente. gracias
+	 * CascadeType.ALL:El check se persistir√° autom√°ticamente al guardar el
 	 * element/policy
 	 */
 	public void removeCheck(PolicyCheckEntity check) {

@@ -23,7 +23,6 @@ import jakarta.persistence.*;
 /*Entidad principal de Policy con las relaciones  aAgentEntity y  AgentGroupEntity*/
 @Entity
 @Table(name = "policies")
-@Schema(description = "Entidad principal que define una normativa o política de cumplimiento")
 public class PolicyEntity {
 	@Id
 	@GeneratedValue
@@ -56,11 +55,11 @@ public class PolicyEntity {
 	// Politicas asignadas a agentes.
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "policy_agents", joinColumns = @JoinColumn(name = "policy_id"), inverseJoinColumns = @JoinColumn(name = "agent_id"))
+	@JoinTable(name = "agent_policies", joinColumns = @JoinColumn(name = "policy_id"), inverseJoinColumns = @JoinColumn(name = "agent_id"))
 	private Set<AgentEntity> agents = new HashSet<>();
 	// Politicas asignadas a grupos de agentes.
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "policy_groups", joinColumns = @JoinColumn(name = "policy_id"), inverseJoinColumns = @JoinColumn(name = "group_id"))
+	@JoinTable(name = "group_policies", joinColumns = @JoinColumn(name = "policy_id"), inverseJoinColumns = @JoinColumn(name = "group_id"))
 	private Set<AgentGroupEntity> groups = new HashSet<>();
 
 	public PolicyEntity() {

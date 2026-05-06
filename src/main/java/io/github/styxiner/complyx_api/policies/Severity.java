@@ -1,4 +1,4 @@
-package io.github.styxiner.complyx_api.policies;
+﻿package io.github.styxiner.complyx_api.policies;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

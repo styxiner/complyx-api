@@ -1,4 +1,4 @@
-package io.github.styxiner.complyx_api.policies;
+锘縫ackage io.github.styxiner.complyx_api.policies;
 
 import java.util.UUID;
 
@@ -12,7 +12,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
 /*
- * Construcci髇 de queries din醡icas para PolicyEntity.
+ * Construcci贸n de queries din谩micas para PolicyEntity.
  * 
  */
 public final class PolicySpecifications {
@@ -140,14 +140,14 @@ public final class PolicySpecifications {
 		}
 
 		if (Boolean.TRUE.equals(filter.getIncludeUnassigned())) {
-			// Si hay filtros de asignaci髇, incluye tambi閚 las no asignadas.
+			// Si hay filtros de asignaci贸n, incluye tambi茅n las no asignadas.
 			if (hasAssignmentFilters) {
 				spec = spec.and(anyOf(assignmentSpec, isUnassigned()));
 			}
-			// Si no hay filtros de asignaci髇, true equivale a no restringir.
+			// Si no hay filtros de asignaci贸n, true equivale a no restringir.
 		} else if (Boolean.FALSE.equals(filter.getIncludeUnassigned())) {
 			// Si no se quieren las no asignadas y no hay filtros concretos,
-			// mostramos solo las que tienen al menos una asignaci髇.
+			// mostramos solo las que tienen al menos una asignaci贸n.
 			if (hasAssignmentFilters) {
 				spec = spec.and(assignmentSpec);
 			} else {

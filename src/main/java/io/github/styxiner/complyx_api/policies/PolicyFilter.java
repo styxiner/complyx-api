@@ -1,13 +1,13 @@
-package io.github.styxiner.complyx_api.policies;
+ï»¿package io.github.styxiner.complyx_api.policies;
 
 import java.util.UUID;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-/*Objeto de consulta utilizado para construir dinámicamente Specifications 
- *de búsqueda sobre PolicyEntity contiene criterios de filtrado.
+/*Objeto de consulta utilizado para construir dinÃ¡micamente Specifications 
+ *de bÃºsqueda sobre PolicyEntity contiene criterios de filtrado.
  */
-@Schema(name = "PolicyFilter", description = "Filtros disponibles para búsqueda dinámica de policies")
+@Schema(name = "PolicyFilter", description = "Filtros disponibles para bÃºsqueda dinÃ¡mica de policies")
 public class PolicyFilter {
 	private String name;
 	@Schema(description = "Filtrar por severidad", example = "HIGH")
@@ -17,8 +17,8 @@ public class PolicyFilter {
 	@Schema(description = "Filtrar por grupo asignado")
 	private UUID assignedToGroupId;
 	/*
-	 * Indica si deben incluirse también las politicas que no están asignadas a
-	 * ningún agente ni grupo; true:todas; false: solo politicas asignadas según los
+	 * Indica si deben incluirse tambiÃ©n las politicas que no estÃ¡n asignadas a
+	 * ningÃºn agente ni grupo; true:todas; false: solo politicas asignadas segÃºn los
 	 * filtros aplicados; null:comportamiento por defecto definido en la
 	 * Specification
 	 */

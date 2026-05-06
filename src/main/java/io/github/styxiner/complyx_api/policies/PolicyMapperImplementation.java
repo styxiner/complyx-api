@@ -90,6 +90,21 @@ public class PolicyMapperImplementation {
 		entity.setSeverity(dto.getSeverity());
 		entity.setStatus(dto.getStatus());
 
+		Set<UUID> dtoElementIds = new HashSet<>();
+		for (PolicyElementUpdateDTO elDto : dto.getElements()) {
+			if (elDto.getId() != null) {
+				dtoElementIds.add(elDto.getId());
+			}
+		}
+		
+		Iterator<PolicyElementEntity> elementIterator = entity.getElements().iterator();
+		while (elementIterator.hasNext()) {
+			PolicyElementEntity e = elementIterator.next();
+			if (e.getId() != null && !dtoElementIds.contains(e.getId())) {
+				elementIterator.remove();
+			}
+		}
+		
 		Map<UUID, PolicyElementEntity> existingElements = new HashMap<>();
 
 		for (PolicyElementEntity e : entity.getElements()) {
@@ -112,6 +127,21 @@ public class PolicyMapperImplementation {
 			}
 
 			// CHECKS
+			Set<UUID> dtoCheckIds = new HashSet<>();
+			for (PolicyCheckUpdateDTO chkDto : elementDTO.getChecks()) {
+				if (chkDto.getId() != null) {
+					dtoCheckIds.add(chkDto.getId());
+				}
+			}
+			
+			Iterator<PolicyCheckEntity> checkIterator = element.getChecks().iterator();
+			while (checkIterator.hasNext()) {
+				PolicyCheckEntity c = checkIterator.next();
+				if (c.getId() != null && !dtoCheckIds.contains(c.getId())) {
+					checkIterator.remove();
+				}
+			}
+			
 			Map<UUID, PolicyCheckEntity> existingChecks = new HashMap<>();
 
 			for (PolicyCheckEntity c : element.getChecks()) {
@@ -138,6 +168,25 @@ public class PolicyMapperImplementation {
 				}
 
 				// REMEDIATIONS
+				if (checkDTO.getRemediations() != null) {
+					Set<UUID> dtoRemIds = new HashSet<>();
+					for (PolicyRemediationUpdateDTO remDto : checkDTO.getRemediations()) {
+						if (remDto.getId() != null) {
+							dtoRemIds.add(remDto.getId());
+						}
+					}
+					
+					Iterator<PolicyRemediationEntity> remIterator = check.getRemediations().iterator();
+					while (remIterator.hasNext()) {
+						PolicyRemediationEntity r = remIterator.next();
+						if (r.getId() != null && !dtoRemIds.contains(r.getId())) {
+							remIterator.remove();
+						}
+					}
+				} else {
+					check.getRemediations().clear();
+				}
+				
 				Map<UUID, PolicyRemediationEntity> existingRem = new HashMap<>();
 
 				for (PolicyRemediationEntity r : check.getRemediations()) {

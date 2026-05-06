@@ -1,21 +1,21 @@
-package io.github.styxiner.complyx_api.policies;
+ï»¿package io.github.styxiner.complyx_api.policies;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
 /*
- * DTO de entrada para definir una acción de remediación.
- * Representa qué hacer cuando un check no se cumple.
+ * DTO de entrada para definir una acciÃ³n de remediaciÃ³n.
+ * Representa quÃ© hacer cuando un check no se cumple.
  */
-@Schema(description = "Remediación asociada a un check")
+@Schema(description = "RemediaciÃ³n asociada a un check")
 public class PolicyRemediationCreateDTO {
 	@NotBlank
     private String name;
 	@NotBlank
-	@Schema(description = "Descripción de la acción correctiva")
+	@Schema(description = "DescripciÃ³n de la acciÃ³n correctiva")
 	private String description;
 	@NotBlank
-    @Schema(description = "Comando técnico a ejecutar para remediar", example = "ansible-playbook update_tls.yml")
+    @Schema(description = "Comando tÃ©cnico a ejecutar para remediar", example = "ansible-playbook update_tls.yml")
     private String remediationCommand;
 	public String getName() {
 		return name;

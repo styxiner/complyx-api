@@ -1,4 +1,4 @@
-package io.github.styxiner.complyx_api.policies;
+ï»¿package io.github.styxiner.complyx_api.policies;
 
 import java.util.List;
 import java.util.UUID;
@@ -8,7 +8,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 
 /*
- * DTO de actualización de un check dentro de un elemento.
+ * DTO de actualizaciÃ³n de un check dentro de un elemento.
  * Define reglas, severidad y acciones correctivas.
  */
 @Schema(description = "Datos para actualizar un chequeo")
@@ -18,11 +18,11 @@ public class PolicyCheckUpdateDTO {
 	private String name;
 	private String description;
 	@NotBlank
-	@Schema(description = "Comando técnico de validación")
+	@Schema(description = "Comando tÃ©cnico de validaciÃ³n")
 	private String checkCommand;
 	@Schema(description = "Severidad del check")
 	private Severity severity;
-	@Schema(description = "Justificación del check")
+	@Schema(description = "JustificaciÃ³n del check")
 	private String rationale;
 	@Valid
 	@Schema(description = "Remediaciones asociadas")

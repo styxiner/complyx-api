@@ -1,17 +1,17 @@
-package io.github.styxiner.complyx_api.policies;
+ï»¿package io.github.styxiner.complyx_api.policies;
 
 import java.util.UUID;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /*
- * DTO que representa una acción de remediación para un PolicyCheck.
- * Define qué hacer cuando un check no se cumple.
+ * DTO que representa una acciÃ³n de remediaciÃ³n para un PolicyCheck.
+ * Define quÃ© hacer cuando un check no se cumple.
  */
-@Schema(description = "Acción de remediación asociada a un check")
+@Schema(description = "AcciÃ³n de remediaciÃ³n asociada a un check")
 public class PolicyRemediationDTO {
 	private UUID id;
 	private String name;
-	@Schema(description = "Descripción de la acción correctiva")
+	@Schema(description = "DescripciÃ³n de la acciÃ³n correctiva")
 	private String description;
 
 	public PolicyRemediationDTO() {

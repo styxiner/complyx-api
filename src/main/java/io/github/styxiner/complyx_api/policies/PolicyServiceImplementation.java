@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.*;
 /*
 import io.github.styxiner.complyx_api.regulations.RegulationSectionEntity;
 import io.github.styxiner.complyx_api.regulations.RegulationSectionRepository;
@@ -170,33 +171,6 @@ public class PolicyServiceImplementation implements PolicyService {
 		policyRepository.delete(policy);
 	}
 
-	// VALIDACIONES
-
-	private void validateCreate(PolicyCreateDTO dto) {
-
-		if (dto.getName() == null || dto.getName().isBlank()) {
-			throw new IllegalArgumentException("Policy name is required");
-		}
-		if (dto.getStatus() == null) { 
-			throw new IllegalArgumentException("Policy status is required");
-		}
-		if (dto.getElements() == null || dto.getElements().isEmpty()) {
-			throw new IllegalArgumentException("Policy must have elements");
-		}
-	}
-
-	private void validateUpdate(PolicyUpdateDTO dto) {
-
-		if (dto.getName() == null || dto.getName().isBlank()) {
-			throw new IllegalArgumentException("Policy name is required");
-		}
-		if (dto.getStatus() == null) {
-			throw new IllegalArgumentException("Policy status is required");
-		}
-		if (dto.getElements() == null) {
-			throw new IllegalArgumentException("Elements cannot be null");
-		}
-	}
 
 //ASIGNACIONES
 	@Override

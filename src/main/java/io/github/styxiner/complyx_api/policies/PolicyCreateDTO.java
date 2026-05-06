@@ -16,7 +16,6 @@ public class PolicyCreateDTO {
 	private String name;
 	@NotBlank
 	private String version;
-	private String description;
 	@NotNull
 	@Schema(description = "Severidad global de la policy")
 	private Severity severity;
@@ -39,12 +38,7 @@ public class PolicyCreateDTO {
 	public void setVersion(String version) {
 		this.version = version;
 	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
+
 	public Severity getSeverity() {
 		return severity;
 	}

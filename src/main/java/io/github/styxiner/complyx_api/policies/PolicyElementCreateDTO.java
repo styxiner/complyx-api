@@ -1,4 +1,4 @@
-package io.github.styxiner.complyx_api.policies;
+﻿package io.github.styxiner.complyx_api.policies;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * DTO de entrada para crear un elemento dentro de una Policy.
  * Contiene los checks asociados que forman parte del elemento.
  */
-@Schema(description = "Elemento de una politica en creaci�n")
+@Schema(description = "Elemento de una politica en creación")
 public class PolicyElementCreateDTO {
     @NotBlank
     private String name;

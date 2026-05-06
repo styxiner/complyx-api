@@ -1,4 +1,4 @@
-package io.github.styxiner.complyx_api.policies;
+Ôªøpackage io.github.styxiner.complyx_api.policies;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -88,7 +88,7 @@ public class PolicyRemediationEntity {
 		}
 		/*
 	     * Callback de JPA ejecutado antes de INSERT.
-	     * Garantiza que la fecha de creaciÛn se establezca autom·ticamente
+	     * Garantiza que la fecha de creaci√≥n se establezca autom√°ticamente
 	     */
 	    @PrePersist
 	    protected void onCreate() {

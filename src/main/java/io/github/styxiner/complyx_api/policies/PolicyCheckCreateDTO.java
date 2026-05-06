@@ -16,13 +16,9 @@ import jakarta.validation.constraints.NotNull;
 public class PolicyCheckCreateDTO {
 	@NotBlank
 	private String name;
-	private String description;
 	@NotBlank
 	@Schema(description = "Comando de validación")
 	private String checkCommand;
-	@NotNull
-	@Schema(description = "Severidad del check")
-	private Severity severity;
 	@Schema(description = "Justificación del check")
 	private String rationale;
 	@Valid
@@ -39,28 +35,12 @@ public class PolicyCheckCreateDTO {
 		this.name = name;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	public String getCheckCommand() {
 		return checkCommand;
 	}
 
 	public void setCheckCommand(String checkCommand) {
 		this.checkCommand = checkCommand;
-	}
-
-	public Severity getSeverity() {
-		return severity;
-	}
-
-	public void setSeverity(Severity severity) {
-		this.severity = severity;
 	}
 
 	public String getRationale() {

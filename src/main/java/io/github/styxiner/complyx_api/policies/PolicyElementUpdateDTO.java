@@ -1,4 +1,4 @@
-package io.github.styxiner.complyx_api.policies;
+ï»¿package io.github.styxiner.complyx_api.policies;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -8,10 +8,10 @@ import java.util.UUID;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 /*
- * DTO de actualización de un elemento de Policy.
+ * DTO de actualizaciÃ³n de un elemento de Policy.
  * Permite modificar checks asociados.
  */
-@Schema(description = "Elemento de una politica en actualización")
+@Schema(description = "Elemento de una politica en actualizaciÃ³n")
 public class PolicyElementUpdateDTO {
 	private UUID id;
 	@NotBlank
