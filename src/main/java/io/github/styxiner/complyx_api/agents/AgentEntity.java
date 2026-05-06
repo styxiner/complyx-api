@@ -49,6 +49,7 @@ public class AgentEntity {
 	@PrePersist
 	protected void onCreate() {
 		this.installDate = LocalDateTime.now();
+		this.latestConnection = LocalDateTime.now(); 
 		this.enabled = true;
 	}
 
@@ -134,10 +135,12 @@ public class AgentEntity {
 
 	public void addGroup(AgentGroupEntity group) {
 		this.groups.add(group);
+		group.getAgents().add(this); // Mantener sincronizada la relacion bidireccional
 	}
 
 	public void removeGroup(AgentGroupEntity group) {
 		this.groups.remove(group);
+		group.getAgents().remove(this); // Mantener sincronizada la relacion bidireccional
 	}
 
 	// Mantiene sincronizada la relacion bidireccional con Policy en memoria.

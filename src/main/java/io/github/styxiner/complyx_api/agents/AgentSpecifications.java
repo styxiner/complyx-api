@@ -69,7 +69,7 @@ public class AgentSpecifications {
 					return cb.conjunction();
 				}
 				query.distinct(true);
-				Join<Object, Object> groupJoin = root.join("groups", JoinType.INNER);
+				Join<AgentEntity, AgentGroupEntity> groupJoin = root.join("groups", JoinType.INNER);
 				return cb.equal(groupJoin.get("id"), groupId);
 			}
 		};

@@ -1,4 +1,4 @@
-package io.github.styxiner.complyx_api.agents;
+ï»¿package io.github.styxiner.complyx_api.agents;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,13 +17,13 @@ public interface AgentGroupMapper {
 	@Mapping(target = "agents", expression = "java(mapAgents(group.getAgents()))")
 	AgentGroupDTO toDTO(AgentGroupEntity group);
 
-	// Convierte DTO de creación -> Entity
+	// Convierte DTO de creaciÃ³n -> Entity
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "agents", ignore = true)
 	@Mapping(target = "policies", ignore = true)
 	AgentGroupEntity toEntity(AgentGroupCreateDTO dto);
 
-	// Método auxiliar para mapear: Set<AgentEntity> -> List<String>
+	// MÃ©todo auxiliar para mapear: Set<AgentEntity> -> List<String>
 
 	default List<String> mapAgents(Set<AgentEntity> agents) {
 		List<String> agentNames = new ArrayList<>();

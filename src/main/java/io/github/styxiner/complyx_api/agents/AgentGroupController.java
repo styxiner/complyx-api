@@ -29,8 +29,8 @@ public class AgentGroupController {
 	@ApiResponses({
 			@ApiResponse(responseCode = "200", description = "Pagina de grupos")
 	})
-	public Page<AgentGroupDTO> getGroups(@ParameterObject AgentGroupFilter filter, @ParameterObject Pageable pageable) {
-		return groupService.findAll(filter, pageable);
+	public ResponseEntity<Page<AgentGroupDTO>> getGroups(@ParameterObject AgentGroupFilter filter, @ParameterObject Pageable pageable) {
+		return ResponseEntity.ok(groupService.findAll(filter, pageable));
 	}
 
 	@GetMapping("/{groupId}")
@@ -39,8 +39,8 @@ public class AgentGroupController {
 			@ApiResponse(responseCode = "200", description = "Grupo encontrado"),
 			@ApiResponse(responseCode = "404", description = "Grupo no encontrado")
 	})
-	public AgentGroupDTO getGroupById(@PathVariable UUID groupId) {
-		return groupService.findById(groupId);
+	public ResponseEntity<AgentGroupDTO> getGroupById(@PathVariable UUID groupId) {
+		return ResponseEntity.ok(groupService.findById(groupId));
 	}
 
 	// Crea un grupo nuevo y devuelve la URL del recurso creado.
@@ -75,7 +75,7 @@ public class AgentGroupController {
 			@ApiResponse(responseCode = "404", description = "Grupo no encontrado"),
 			@ApiResponse(responseCode = "409", description = "Nombre duplicado")
 	})
-	public AgentGroupDTO updateGroup(@PathVariable UUID groupId, @RequestBody AgentGroupUpdateDTO dto) {
-		return groupService.update(groupId, dto);
+	public ResponseEntity<AgentGroupDTO> updateGroup(@PathVariable UUID groupId, @RequestBody AgentGroupUpdateDTO dto) {
+		return ResponseEntity.ok(groupService.update(groupId, dto));
 	}
 }

@@ -88,8 +88,9 @@ public class AgentGroupService {
 				});
 
 		// Actualizar nombre
-		if (dto.getName() != null) { // si esque llega
-
+		if (dto.getName() != null) { if (dto.getName().isBlank()) {
+			throw new IllegalArgumentException("Group name cannot be blank");
+		}
 			// Validar duplicado (solo si cambia)
 			if (!dto.getName().equals(group.getName()) && groupRepository.existsByName(dto.getName())) {
 				throw new RuntimeException("Group name already exists");
@@ -97,7 +98,9 @@ public class AgentGroupService {
 			group.setName(dto.getName());
 		}
 		// Actualizar descripción
-		if (dto.getDescription() != null) {
+		if (dto.getDescription() != null) {if (dto.getDescription().isBlank()) {
+			throw new IllegalArgumentException("Group description cannot be blank");
+		}
 			group.setDescription(dto.getDescription());
 		}
 		// Guardar cambios

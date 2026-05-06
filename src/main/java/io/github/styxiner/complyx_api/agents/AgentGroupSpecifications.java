@@ -5,14 +5,17 @@ import java.util.UUID;
 import org.springframework.data.jpa.domain.Specification;
 import jakarta.persistence.criteria.*;
 
-// Construye filtros dinámicos para AgentGroupEntity
+// Construye filtros dinamicos para AgentGroupEntity
 public final class AgentGroupSpecifications {
+	private AgentGroupSpecifications() {
+		
+	}
 	//Filtra por nombre (case insensitive)
 	public static Specification<AgentGroupEntity> hasName(String name) {
 		return new Specification<AgentGroupEntity>() {
 			@Override
 			public Predicate toPredicate(Root<AgentGroupEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-				if (name == null) {
+				if (name == null || name.isBlank()) {
 					return cb.conjunction();
 				}
 				return cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%");
@@ -42,7 +45,7 @@ public final class AgentGroupSpecifications {
 	                    return cb.conjunction();
 	                }
 	                // JOIN con la tabla de agentes
-	                Join<Object, Object> agentJoin = root.join("agents", JoinType.INNER);
+	                Join<AgentGroupEntity, AgentEntity> agentJoin = root.join("agents", JoinType.INNER);
 	                //Evita duplicados en resultados pues un grupo puede tener varios agentes
 	                query.distinct(true);
 	                return cb.equal(agentJoin.get("id"), agentId);
@@ -50,14 +53,14 @@ public final class AgentGroupSpecifications {
 	        };
 	}
 
-	// combinación filtros dinámicos
+	// combinacion filtros dinamicos
 	public static Specification<AgentGroupEntity> build(AgentGroupFilter filter) {
 		if (filter == null) {
 			return Specification.unrestricted();
 		}
 		Specification<AgentGroupEntity> spec = Specification.unrestricted();
 
-		if (filter.getName() != null) {
+		if (filter.getName() != null && !filter.getName().isBlank()) {
 			spec = spec.and(hasName(filter.getName()));
 		}
 		if (filter.getDescription() != null && !filter.getDescription().isBlank()) {

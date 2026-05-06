@@ -1,4 +1,4 @@
-package io.github.styxiner.complyx_api.agents;
+﻿package io.github.styxiner.complyx_api.agents;
 
 import java.util.UUID;
 
@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 /*
  * DTO de filtro para grupos de agentes.
- * Se usa en endpoints GET /api/groups y se mapea autom�ticamente desde query params.
+ * Se usa en endpoints GET /api/groups y se mapea automáticamente desde query params.
  */
 @Schema(description = "Filtro para buscar grupos de agentes")
 public class AgentGroupFilter {
