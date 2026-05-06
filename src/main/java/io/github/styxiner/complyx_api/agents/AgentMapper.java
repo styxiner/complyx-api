@@ -3,6 +3,8 @@ package io.github.styxiner.complyx_api.agents;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Set;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -25,6 +27,7 @@ public interface AgentMapper {
 	@Mapping(target = "enabled", ignore = true)
 	AgentEntity toEntity(AgentRegisterDTO agentRegisterDTO);
 
+
 	/*
 	 * Definimos manualmente este metodo para mapear, como tiene implementacion
 	 * usamos default para que la interfaz lo use. Este metodo convierte
@@ -33,8 +36,13 @@ public interface AgentMapper {
 	 */
 
 	default List<String> mapGroups(Set<AgentGroupEntity> groups) {
-		if (groups == null)
-			return null;
-		return groups.stream().map(AgentGroupEntity::getName).collect(Collectors.toList());
+		if (groups == null) return null;
+		    List<String> list = new java.util.ArrayList<>();
+		    for (AgentGroupEntity group : groups) {
+		        list.add(group.getName());
+		    }
+		   return list;
+
 	}
+
 }

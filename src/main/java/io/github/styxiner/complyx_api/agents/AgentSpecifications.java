@@ -6,10 +6,11 @@ import org.springframework.data.jpa.domain.Specification;
 
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
-
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.criteria.*;
 /*
- * Clase que construye filtros dinámicos para AgentEntity.
- * Cada método representa una condición opcional.
+ * Clase que construye filtros dinï¿½micos para AgentEntity.
+ * Cada mï¿½todo representa una condiciï¿½n opcional.
  * Si el valor es null, no se aplica filtro.
  */
 public class AgentSpecifications {
@@ -35,8 +36,8 @@ public class AgentSpecifications {
 	}
 
 	/*
-	 * Al usar root.join, si un agente pertenece a 3 grupos diferentes podría haber
-	 * duplicados en el listado. añadir query.distinct(true); dentro de la
+	 * Al usar root.join, si un agente pertenece a 3 grupos diferentes podrï¿½a haber
+	 * duplicados en el listado. aï¿½adir query.distinct(true); dentro de la
 	 * Specification si esto sucede.
 	 */
 	public static Specification<AgentEntity> inGroup(UUID groupId) {
@@ -48,19 +49,106 @@ public class AgentSpecifications {
 			Join<Object, Object> groupJoin = root.join("groups", JoinType.INNER);
 			/*
 			 * usa la relacion definida en el atributo groups de la entidad para "unirse" a
-			 * la tabla grupos, con JoinType.Inner conseguimos agentes que sí tengan al
+			 * la tabla grupos, con JoinType.Inner conseguimos agentes que sï¿½ tengan al
 			 * menos un grupo asignado que coincida
 			 */
 			return cb.equal(groupJoin.get("id"), groupId);
 			// para buscar en la tabla de grupos aquel cuyo id sea igual al gruopId del
-			// parámetro
+			// parï¿½metro
+		};
+
+
+/*
+ * Clase que construye filtros dinï¿½micos para AgentEntity.
+ * Cada mï¿½todo representa una condiciï¿½n opcional.
+ * Si el valor es null, no se aplica filtro.
+ */
+@Schema(description = "Filtros dinï¿½micos para bï¿½squeda de agentes")
+public class AgentSpecifications {
+// * Filtra agentes por IP exacta.Si es null, no aplica ningï¿½n filtro.	
+	public static Specification<AgentEntity> hasIp(String ip) {
+		return new Specification<AgentEntity>() {
+			@Override
+			public Predicate toPredicate(Root<AgentEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				if (ip == null) {
+					return cb.conjunction();
+				}
+				return cb.equal(root.get("ip"), ip);
+			}
+		};
+	}
+
+//Filtra por hostname usando bï¿½squeda parcial (LIKE, case-insensitive).
+	public static Specification<AgentEntity> hasHostname(String hostname) {
+		return new Specification<AgentEntity>() {
+			@Override
+			public Predicate toPredicate(Root<AgentEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				if (hostname == null) {
+					return cb.conjunction();
+				}
+				return cb.like(cb.lower(root.get("hostname")), "%" + hostname.toLowerCase() + "%");
+			}
+		};
+	}
+
+// Filtra por nombre del sistema operativo (LIKE, case-insensitive).
+	public static Specification<AgentEntity> hasOsName(String osName) {
+		return new Specification<AgentEntity>() {
+			@Override
+			public Predicate toPredicate(Root<AgentEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				if (osName == null) {
+					return cb.conjunction();
+				}
+				return cb.like(cb.lower(root.get("osName")), "%" + osName.toLowerCase() + "%");
+			}
+		};
+	}
+
+	// Filtra por estado habilitado/deshabilitado. la clase envoltorio Boolean
+	// permite null para aplicar el filtro solo cuando
+	// sea necesaario
+	public static Specification<AgentEntity> isEnabled(Boolean enabled) {
+		return new Specification<AgentEntity>() {
+			@Override
+			public Predicate toPredicate(Root<AgentEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				if (enabled == null) {
+					return cb.conjunction();
+				}
+				return cb.equal(root.get("enabled"), enabled);
+			}
 		};
 	}
 
 	/*
+	 * * Filtra agentes que pertenecen a un grupo especï¿½fico. Usa JOIN ManyToMany y
+	 * distinct para evitar duplicados.
+	 */
+	public static Specification<AgentEntity> inGroup(UUID groupId) {
+		return new Specification<AgentEntity>() {
+			@Override
+			public Predicate toPredicate(Root<AgentEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				if (groupId == null) {
+					return cb.conjunction();
+				}
+				query.distinct(true);
+				/*
+				 * usa la relacion definida en el atributo groups de la entidad para "unirse" a
+				 * la tabla grupos, con JoinType.Inner conseguimos agentes que sï¿½ tengan al
+				 * menos un grupo asignado que coincida
+				 */
+				Join<Object, Object> groupJoin = root.join("groups", JoinType.INNER);
+				// para buscar en la tabla de grupos aquel cuyo id sea igual al gruopId del
+				// parï¿½metro
+				return cb.equal(groupJoin.get("id"), groupId);
+			}
+		};
+
+	}
+
+	/*
 	 * Construye la Specification final combinando todos los filtros.
-	 * Specification.where(spec) está obsoleto, con Specification.unrestricted() se
-	 * empieza sin restricciones y se van añadiendo condiciones
+	 * Specification.where(spec) estï¿½ obsoleto, con Specification.unrestricted() se
+	 * empieza sin restricciones y se van aï¿½adiendo condiciones
 	 */
 	public static Specification<AgentEntity> build(AgentFilter filter) {
 
@@ -91,4 +179,5 @@ public class AgentSpecifications {
 		}
 		return spec;
 	}
+
 }

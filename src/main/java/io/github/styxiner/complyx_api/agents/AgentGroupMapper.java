@@ -3,6 +3,9 @@ package io.github.styxiner.complyx_api.agents;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,20 +17,29 @@ import org.mapstruct.Mapping;
 public interface AgentGroupMapper {
 
 	// Convierte la Entidad (DB) al DTO de salida para el cliente
-	@Mapping(target = "agentCount", expression = "java(mapAgents(group.getAgents()))")
+	@Mapping(target = "agents", expression = "java(mapAgents(group.getAgents()))")
 	AgentGroupDTO toDTO(AgentGroupEntity group);
 
-	// Convierte DTO de creación -> Entity
+	// Convierte DTO de creaciï¿½n -> Entity
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "agents", ignore = true)
+	@Mapping(target = "policies", ignore = true)
 	AgentGroupEntity toEntity(AgentGroupCreateDTO dto);
 
-	// Método auxiliar para mapear: Set<AgentEntity> -> List<String>
+	// Mï¿½todo auxiliar para mapear: Set<AgentEntity> -> List<String>
 
 	default List<String> mapAgents(Set<AgentEntity> agents) {
-		if (agents == null)
-			return null;
+		List<String> agentNames = new ArrayList<>();
 
-		return agents.stream().map(AgentEntity::getHostname).collect(Collectors.toList());
+		if (agents == null) {
+			return agentNames;
+		}
+
+		for (AgentEntity agent : agents) {
+			agentNames.add(agent.getHostname());
+		}
+
+		return agentNames;
 	}
+
 }

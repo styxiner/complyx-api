@@ -1,6 +1,8 @@
 package io.github.styxiner.complyx_api.agents;
 
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +16,13 @@ import jakarta.validation.Valid;
 @Service
 @Transactional(readOnly = true)
 public class AgentService {
+	Page<AgentDTO> findAll(AgentFilter agentFilter, Pageable pageable) {return null;}
+	AgentDTO findById(UUID agentId) {return null;}
+	AgentDTO register(AgentRegisterDTO agentRegisterDTO) {return null;}
+	void assignGroup(UUID agentId, UUID groupId) {}
+	void removeGroup(UUID agentId, UUID groupId) {}
+	void delete(UUID agentId) {}
+
 	private final AgentRepository agentRepository;
 	private final AgentGroupRepository groupRepository;
 	private final AgentMapper agentMapper;
@@ -26,25 +35,42 @@ public class AgentService {
 		this.agentMapper = agentMapper;
 	}
 
-// Obtiene una página de agentes filtrados y los convierte a DTO.
+	/*
+	 * Usamos una clase anï¿½nima para crear un objeto que implementa una interfaz en
+	 * particular y poder usarlo libremente sin definir explï¿½citamente mï¿½s clases y no usar lambdas
+	 */
+// Obtiene una pï¿½gina de agentes filtrados y los convierte a DTO.
 	public Page<AgentDTO> findAll(AgentFilter filter, Pageable pageable) {
 		Specification<AgentEntity> spec = AgentSpecifications.build(filter);
-		return agentRepository.findAll(spec, pageable).map(agentMapper::toDTO);
+		return agentRepository.findAll(spec, pageable).map(new Function<AgentEntity, AgentDTO>() {
+			@Override
+			public AgentDTO apply(AgentEntity agent) {
+				return agentMapper.toDTO(agent);
+			}
+		});
 	}
 
-// Busca un agente por su UUID o lanza una excepción si no existe.
+	/*
+	 * En este caso se usa para implementar Supplier<T>, que es requerido por
+	 * orElseThrow().
+	 */
+// Busca un agente por su UUID o lanza una excepciï¿½n si no existe.
 	AgentDTO findById(UUID agentId) {
-		AgentEntity agent = agentRepository.findById(agentId)
-				.orElseThrow(() -> new RuntimeException("Agent not found"));
-
+		AgentEntity agent = agentRepository.findById(agentId).orElseThrow(new Supplier<RuntimeException>() {
+			@Override
+			public RuntimeException get() {
+				return new RuntimeException("Agent not found");
+			}
+		});
 		return agentMapper.toDTO(agent);// Devuelve el agente convertido a DTO
 	}
 
-// Registra un nuevo agente validando que la IP sea única y asignando valores iniciales.
+// Registra un nuevo agente validando que la IP sea ï¿½nica y asignando valores iniciales.
 	@Transactional
-	public AgentDTO register(@Valid @RequestBody AgentRegisterDTO agentRegisterDTO) { // Convertimos el DTO de registro en una Entidad de
-																	// base de datos dado que manipulamos la BD es
-																	// necesario @Transaccional
+	public AgentDTO register(AgentRegisterDTO agentRegisterDTO) { // Convertimos el DTO de registro
+																						// en una Entidad de
+		// base de datos dado que manipulamos la BD es
+		// necesario @Transaccional
 		if (agentRepository.existsByIp(agentRegisterDTO.getIp())) {
 			throw new RuntimeException("Agent with this IP already exists");
 		}
@@ -53,29 +79,46 @@ public class AgentService {
 
 		return agentMapper.toDTO(saved);
 	}
-// Asocia un agente a un grupo específico.
+
+// Asocia un agente a un grupo especï¿½fico.
 	@Transactional
 	void assignGroup(UUID agentId, UUID groupId) {
-		AgentEntity agent = agentRepository.findById(agentId)
-				.orElseThrow(() -> new RuntimeException("Agent not found"));
-
-		AgentGroupEntity group = groupRepository.findById(groupId)
-				.orElseThrow(() -> new RuntimeException("Group not found"));
-// Buscamos ambos objetos. Si alguno falla, se cancela la operación.
+		AgentEntity agent = agentRepository.findById(agentId).orElseThrow(new Supplier<RuntimeException>() {
+			@Override
+			public RuntimeException get() {
+				return new RuntimeException("Agent not found");
+			}
+		});
+		AgentGroupEntity group = groupRepository.findById(groupId).orElseThrow(new Supplier<RuntimeException>() {
+			@Override
+			public RuntimeException get() {
+				return new RuntimeException("Group not found");
+			}
+		});
+// Buscamos ambos objetos. Si alguno falla, se cancela la operaciï¿½n.
 		agent.addGroup(group);
-		agentRepository.save(agent);//Añadimos el grupo y persistimos el cambio
+		agentRepository.save(agent);// Aï¿½adimos el grupo y persistimos el cambio
 	}
-	
-// Desvincula un agente de un grupo específico.
+
+// Desvincula un agente de un grupo especï¿½fico.
 	@Transactional
 	void removeGroup(UUID agentId, UUID groupId) {
-		AgentEntity agent = agentRepository.findById(agentId)
-				.orElseThrow(() -> new RuntimeException("Agent not found"));
-		AgentGroupEntity group = groupRepository.findById(groupId)
-				.orElseThrow(() -> new RuntimeException("Group not found"));
+		AgentEntity agent = agentRepository.findById(agentId).orElseThrow(new Supplier<RuntimeException>() {
+			@Override
+			public RuntimeException get() {
+				return new RuntimeException("Agent not found");
+			}
+		});
+		AgentGroupEntity group = groupRepository.findById(groupId).orElseThrow(new Supplier<RuntimeException>() {
+			@Override
+			public RuntimeException get() {
+				return new RuntimeException("Group not found");
+			}
+		});
 		agent.removeGroup(group);
 		agentRepository.save(agent);
 	}
+
 // Elimina un agente del sistema tras verificar su existencia.
 	@Transactional
 	public void delete(UUID agentId) {
@@ -89,22 +132,27 @@ public class AgentService {
 	@Transactional
 	public AgentDTO enable(UUID agentId) {
 
-		AgentEntity agent = agentRepository.findById(agentId)
-				.orElseThrow(() -> new RuntimeException("Agent not found"));
-
+		AgentEntity agent = agentRepository.findById(agentId).orElseThrow(new Supplier<RuntimeException>() {
+			@Override
+			public RuntimeException get() {
+				return new RuntimeException("Agent not found");
+			}
+		});
 		agent.setEnabled(true);
-
 		return agentMapper.toDTO(agentRepository.save(agent));
 	}
+
 // Desactiva un agente restringiendo sus operaciones.
 	@Transactional
 	public AgentDTO disable(UUID agentId) {
 
-		AgentEntity agent = agentRepository.findById(agentId)
-				.orElseThrow(() -> new RuntimeException("Agent not found"));
-
+		AgentEntity agent = agentRepository.findById(agentId).orElseThrow(new Supplier<RuntimeException>() {
+			@Override
+			public RuntimeException get() {
+				return new RuntimeException("Agent not found");
+			}
+		});
 		agent.setEnabled(false);
-
 		return agentMapper.toDTO(agentRepository.save(agent));
 	}
 

@@ -1,6 +1,7 @@
 package io.github.styxiner.complyx_api.agents;
 
 import java.util.UUID;
+import java.util.function.Function;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /*
- * Servicio que contiene la lógica de negocio para los grupos de agentes (interactúa con entidades directamente)
+ * Servicio que contiene la lï¿½gica de negocio para los grupos de agentes (interactï¿½a con entidades directamente)
  */
 @Service
 @Transactional(readOnly = true)
@@ -22,23 +23,34 @@ public class AgentGroupService {
 		this.groupRepository = groupRepository;
 		this.groupMapper = groupMapper;
 	}
+	/*
+	 * Usamos una clase anï¿½nima para crear un objeto que implementa una interfaz en
+	 * particular y poder usarlo libremente sin definir explï¿½citamente mï¿½s clases y
+	 * no usar lambdas
+	 */
 
 	// Obtiene todos los grupos paginados aplicando filtros dinamicos
-	public Page<AgentGroupDTO> findAll(AgentGroupFilter filter,Pageable pageable) {
-		// Construimos la especificacion a partir del filtro
-        Specification<AgentGroupEntity> spec = AgentGroupSpecifications.build(filter);
-        //Ejecutamos la query con paginación
-        Page<AgentGroupEntity> page = groupRepository.findAll(spec, pageable);
-        //Convertimos Entity -> DTO
-        return page.map(groupMapper::toDTO);
+	public Page<AgentGroupDTO> findAll(AgentGroupFilter filter, Pageable pageable) {
+		Specification<AgentGroupEntity> spec = AgentGroupSpecifications.build(filter);// Construimos la especificacion a
+																						// partir del filtro
+		Page<AgentGroupEntity> page = groupRepository.findAll(spec, pageable);// Ejecutamos la query con paginaciï¿½n
+		return page.map(new Function<AgentGroupEntity, AgentGroupDTO>() { // Convertimos Entity -> DTO
+			@Override
+			public AgentGroupDTO apply(AgentGroupEntity group) {
+				return groupMapper.toDTO(group);
+			}
+		});
 	}
 
 	// Obtiene un grupo por ID
-
 	public AgentGroupDTO findById(UUID groupId) {
 		AgentGroupEntity group = groupRepository.findById(groupId)
-				.orElseThrow(() -> new RuntimeException("Group not found"));
-
+				.orElseThrow(new java.util.function.Supplier<RuntimeException>() {
+					@Override
+					public RuntimeException get() {
+						return new RuntimeException("Group not found");
+					}
+				});
 		return groupMapper.toDTO(group);
 	}
 
@@ -47,7 +59,7 @@ public class AgentGroupService {
 	public AgentGroupDTO create(AgentGroupCreateDTO dto) {
 
 		if (groupRepository.existsByName(dto.getName())) {
-			throw new RuntimeException("Group with this name already exists");// Validación: nombre único
+			throw new RuntimeException("Group with this name already exists");// Validaciï¿½n: nombre ï¿½nico
 		}
 		AgentGroupEntity group = groupMapper.toEntity(dto);// Convertimos DTO -> Entity
 		AgentGroupEntity saved = groupRepository.save(group);// Guardamos en BD
@@ -67,7 +79,13 @@ public class AgentGroupService {
 	@Transactional
 	public AgentGroupDTO update(UUID groupId, AgentGroupUpdateDTO dto) {
 		AgentGroupEntity group = groupRepository.findById(groupId)
-				.orElseThrow(() -> new RuntimeException("Group not found"));
+				.orElseThrow(new java.util.function.Supplier<RuntimeException>() {
+					@Override
+					public RuntimeException get() {
+						return new RuntimeException("Group not found");
+					}
+				});
+
 		// Actualizar nombre
 		if (dto.getName() != null) { // si esque llega
 
@@ -77,7 +95,7 @@ public class AgentGroupService {
 			}
 			group.setName(dto.getName());
 		}
-		// Actualizar descripción
+		// Actualizar descripciï¿½n
 		if (dto.getDescription() != null) {
 			group.setDescription(dto.getDescription());
 		}

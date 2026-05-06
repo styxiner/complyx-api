@@ -2,9 +2,10 @@ package io.github.styxiner.complyx_api.agents;
 
 import java.util.UUID;
 
+
 /*
  * DTO de filtro para grupos de agentes.
- * Se usa en endpoints GET /api/groups y se mapea automáticamente desde query params.
+ * Se usa en endpoints GET /api/groups y se mapea automï¿½ticamente desde query params.
  */
 public class AgentGroupFilter {
 	private String name;

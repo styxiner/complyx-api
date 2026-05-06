@@ -1,11 +1,12 @@
 package io.github.styxiner.complyx_api.agents;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
 /*
  * DTO de entrada para registrar un nuevo agente.
- * Representa los datos que envía el cliente/agent/frontend
+ * Representa los datos que envï¿½a el cliente/agent/frontend
  */
+@Schema(description = "DTO de entrada para registrar un nuevo agente en el sistema")
 public class AgentRegisterDTO {
 	@NotBlank
 	private String ip;
