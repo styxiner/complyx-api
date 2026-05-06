@@ -1,10 +1,14 @@
 package io.github.styxiner.complyx_api.agents;
 
 import java.util.UUID;
+
 /*
- * DTO de filtro para la búsqueda de agentes.
- * Se usa en endpoints GET /api/agents y se mapea automáticamente desde query params.
+ * DTO de filtro para la bï¿½squeda de agentes.
+ * Se usa en endpoints GET /api/agents y se mapea automï¿½ticamente desde query params.
+ * DTO de filtro para la bï¿½squeda de agentes.
+ * Se usa en endpoints GET /api/agents y se mapea automï¿½ticamente desde query params.
  */
+
 public class AgentFilter {
 	private String ip;
 	private String hostname;
