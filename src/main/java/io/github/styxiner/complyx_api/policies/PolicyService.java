@@ -6,15 +6,14 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public class PolicyService {
-	Page<PolicySummaryDTO> findAll(PolicyFilter filter, Pageable pageable) {return null;}
-	PolicyDetailDTO findById(UUID policyId) {return null;}
-	PolicyDetailDTO create(PolicyCreateDTO policyCreateDto)  {return null;}
-	PolicyDetailDTO update(UUID policyId, PolicyUpdateDTO policyUpdateDto) {return null;}
-	void delete(UUID policyId) {}
-	void assignToAgent(UUID policyId, UUID agentId) {}
-	void unAssignToAgent(UUID policyId, UUID agentId) {}
-	void assignToGroup(UUID policyId, UUID groupId) {}
-	void unAssignToGroup(UUID policyId, UUID groupId) {}
-	List<PolicySummaryDTO> getPoliciesByAgent(UUID agentId) {return null;}
+public interface PolicyService {
+    PolicyDetailDTO createPolicy(PolicyCreateDTO dto);
+    PolicyDetailDTO getPolicyById(UUID id);
+    PolicyDetailDTO updatePolicy(UUID id, PolicyUpdateDTO dto);
+    List<PolicySummaryDTO> getPoliciesByAgent(UUID agentId);
+    Page<PolicySummaryDTO> getAllPolicies(PolicyFilter filter, Pageable pageable);    void deletePolicy(UUID id);
+    void assignToAgent(UUID policyId, UUID agentId);
+    void unAssignToAgent(UUID policyId, UUID agentId);
+    void assignToGroup(UUID policyId, UUID groupId);
+    void unAssignToGroup(UUID policyId, UUID groupId);
 }
