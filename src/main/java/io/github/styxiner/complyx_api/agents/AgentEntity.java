@@ -5,15 +5,17 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import io.github.styxiner.complyx_api.policies.PolicyEntity;
 import jakarta.persistence.*;
 /*
  * Un agente es el software instalado en cada endpoint (Linux/Windows) que se comunica
- * con el servidor de orquestación para reportar su estado de cumplimiento normativo.
+ * con el servidor de orquestacion para reportar su estado de cumplimiento normativo.
  * Esta clase mapea directamente a una tabla en la base de datos.
  */
 
 @Entity
 @Table(name = "agents")
+
 public class AgentEntity {
 	@Id
 	@GeneratedValue
@@ -32,6 +34,8 @@ public class AgentEntity {
 	private LocalDateTime latestConnection;
 	@Column(nullable = false)
 	private boolean enabled;
+	private Set<AgentGroupEntity> groups;
+
 
 	/*
 	 * LAZY:no carga los grupos a menos que se necesiten. Inicializada para evitar
@@ -40,12 +44,15 @@ public class AgentEntity {
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "agent_group_membership", joinColumns = @JoinColumn(name = "agent_id"), inverseJoinColumns = @JoinColumn(name = "group_id"))
 	private Set<AgentGroupEntity> groups = new HashSet<>();
-
 	/*
-	 * Método que se ejecuta automáticamente antes de persistir (para inicializar
-	 * valores por defecto), asigna installDate, activa el agente y es muy útil para
-	 * evitar lógica repetida en el service
+	 * MÃ©todo que se ejecuta automÃ¡ticamente antes de persistir (para inicializar
+	 * valores por defecto), asigna installDate, activa el agente y es muy Ãºtil para
+	 * evitar lÃ³gica repetida en el service
 	 */
+	@ManyToMany(mappedBy = "agents", fetch = FetchType.LAZY)
+	private Set<PolicyEntity> policies = new HashSet<>();
+
+	
 	@PrePersist
 	protected void onCreate() {
 		this.installDate = LocalDateTime.now();
@@ -124,7 +131,17 @@ public class AgentEntity {
 		this.groups = groups;
 	}
 
-//Añade un grupo del agente
+//Agrega un grupo del agente
+
+	public Set<PolicyEntity> getPolicies() {
+		return policies;
+	}
+
+	public void setPolicies(Set<PolicyEntity> policies) {
+		this.policies = policies;
+	}
+
+
 	public void addGroup(AgentGroupEntity group) {
 		this.groups.add(group);
 	}
@@ -133,6 +150,21 @@ public class AgentEntity {
 	public void removeGroup(AgentGroupEntity group) {
 		this.groups.remove(group);
 	}
+
+// Agrega una politica al agente.
+
+	public void addPolicy(PolicyEntity policy) {
+		this.policies.add(policy);
+		policy.getAgents().add(this);
+	}
+
+	// Elimina una politica del agente.
+
+	public void removePolicy(PolicyEntity policy) {
+		this.policies.remove(policy);
+		policy.getAgents().remove(this);
+	}
+
 
 	@Override
 	public int hashCode() {
@@ -146,7 +178,7 @@ public class AgentEntity {
 		if (obj == null)
 			return false;
 		if (!(obj instanceof AgentEntity)) // instanceOf pues Hibernate crea objetos intermediarios en tiempo de
-											// ejecución
+																// ejecucion
 			return false;
 		return id != null && id.equals(((AgentEntity) obj).id); // Si no hay ID, no son iguales
 	}
