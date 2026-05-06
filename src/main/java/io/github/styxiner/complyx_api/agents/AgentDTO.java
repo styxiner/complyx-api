@@ -6,6 +6,14 @@ import java.util.UUID;
 /*
  * Representa los datos que se ennvian al frontend/cliente
  */
+
+import io.swagger.v3.oas.annotations.media.Schema;
+
+/*
+ * Representa los datos que se envian al frontend/cliente
+ */
+@Schema(description = "DTO de entrada para un nuevo agente en el sistema")
+
 public class AgentDTO {
 	private UUID id;
 	private String ip;
