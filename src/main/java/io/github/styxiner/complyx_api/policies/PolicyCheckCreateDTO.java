@@ -17,14 +17,14 @@ public class PolicyCheckCreateDTO {
 	@NotBlank
 	private String name;
 	@NotBlank
-	@Schema(description = "Comando de validaci�n")
+	@Schema(description = "Comando de validaciÃ³n")
 	private String checkCommand;
-	@Schema(description = "Justificaci�n del check")
+	@Schema(description = "JustificaciÃ³n del check")
 	private String rationale;
 	@Valid
-	@Schema(description = "Acciones de remediaci�n asiciadas")
+	@Schema(description = "Acciones de remediaciÃ³n asiciadas")
 	private List<PolicyRemediationCreateDTO> remediations;
-	@Schema(description = "IDs de las secciones de regulaci�n asociadas")
+	@Schema(description = "IDs de las secciones de regulaciÃ³n asociadas")
 	private List<UUID> regulationSectionIds;
 
 	public String getName() {

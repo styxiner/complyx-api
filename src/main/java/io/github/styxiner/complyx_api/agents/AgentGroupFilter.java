@@ -1,4 +1,4 @@
-﻿package io.github.styxiner.complyx_api.agents;
+package io.github.styxiner.complyx_api.agents;
 
 import java.util.UUID;
 

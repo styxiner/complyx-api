@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 import io.github.styxiner.complyx_api.regulations.RegulationSectionEntity;
 
 /*
- * Implementaci�n manual del mapper para operaciones complejas.
- * Maneja creaci�n y actualizaci�n profunda sin romper relaciones JPA.
+ * ImplementaciÃ³n manual del mapper para operaciones complejas.
+ * Maneja creaciÃ³n y actualizaciÃ³n profunda sin romper relaciones JPA.
  */
 @Component
 public class PolicyMapperImplementation {
@@ -79,7 +79,7 @@ public class PolicyMapperImplementation {
 	 * eliminacion -solo actualizar o crear nuevas entidades
 	 *
 	 * estrategia alternativa - FULL SYNC eliminiar los "missing children" -
-	 * requerir�a usar removeXXX() + orphanRemoval
+	 * requerirÃ­a usar removeXXX() + orphanRemoval
 	 */
 	public void updateEntity(PolicyUpdateDTO dto, PolicyEntity entity,
 			Map<UUID, RegulationSectionEntity> regulationMap) {

@@ -42,11 +42,11 @@ public class PolicyEntity {
 	@Column(name = "last_modified")
 	private LocalDateTime lastModified;
 	/*
-	 * CascadeType.ALL:El elemento se persistir� autom�ticamente al guardar la
+	 * CascadeType.ALL:El elemento se persistirÃ¡ automÃ¡ticamente al guardar la
 	 * policy (los elements,checks, remediations...) OrphanRemoval=true:Hibernate
-	 * podr� ejecutar autom�ticamente un DELETE en BD. Esta colecci�n NO debe
+	 * podrÃ¡ ejecutar automÃ¡ticamente un DELETE en BD. Esta colecciÃ³n NO debe
 	 * reemplazarse directamente (setElements) en operaciones de update. Se deben
-	 * usar m�todos helper (addElement/removeElement) para mantener la consistencia
+	 * usar mÃ©todos helper (addElement/removeElement) para mantener la consistencia
 	 * JPA y evitar problemas con orphanRemoval.
 	 */
 	@OneToMany(mappedBy = "policy", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -163,9 +163,9 @@ public class PolicyEntity {
 	}
 
 	/*
-	 * Este m�todo garantiza consistencia en memoria antes de persistir. En JPA las
-	 * relaciones bidireccionales NO se sincronizan autom�ticamente. Hibernate NO
-	 * actualizar� correctamente la FK por lo que asignamos this como policy en el
+	 * Este mÃ©todo garantiza consistencia en memoria antes de persistir. En JPA las
+	 * relaciones bidireccionales NO se sincronizan automÃ¡ticamente. Hibernate NO
+	 * actualizarÃ¡ correctamente la FK por lo que asignamos this como policy en el
 	 * lado hijo
 	 */
 	public void addElement(PolicyElementEntity element) {
@@ -174,8 +174,8 @@ public class PolicyEntity {
 	}
 
 	/*
-	 * Elimina un PolicyElement de la Policy manteniendo la relaci�n bidireccional
-	 * sincronizada. Se elimina del listado (lado padre)y se rompe la relaci�n en el
+	 * Elimina un PolicyElement de la Policy manteniendo la relaciÃ³n bidireccional
+	 * sincronizada. Se elimina del listado (lado padre)y se rompe la relaciÃ³n en el
 	 * hijo (policy = null)
 	 */
 	public void removeElement(PolicyElementEntity element) {
@@ -184,12 +184,12 @@ public class PolicyEntity {
 	}
 
 	/*
-	 * A�ade un agente a la politica. Mantiene sincronizada la relaci�n
+	 * AÃ±ade un agente a la politica. Mantiene sincronizada la relaciÃ³n
 	 * bidireccionaly Evita inconsistencias en memoria
 	 */
 	public void addAgent(AgentEntity agent) {
 		this.agents.add(agent);
-		agent.getPolicies().add(this); // sincronizaci�n bidireccional
+		agent.getPolicies().add(this); // sincronizaciÃ³n bidireccional
 	}
 
 	/* Elimina un agente de la politica */
@@ -198,7 +198,7 @@ public class PolicyEntity {
 		agent.getPolicies().remove(this);
 	}
 
-	/* A�ade un grupo de la politica */
+	/* AÃ±ade un grupo de la politica */
 	public void addGroup(AgentGroupEntity group) {
 		this.groups.add(group);
 		group.getPolicies().add(this);
@@ -211,10 +211,10 @@ public class PolicyEntity {
 	}
 
 	/*
-	 * Callback de JPA que se ejecuta autom�ticamente ANTES de hacer un INSERT.
-	 * Garantiza que la fecha de creaci�n SIEMPRE se establezca, independientemente
-	 * de desde d�nde se persista la entidad y Evita duplicar l�gica en m�ltiples
-	 * m�todos del Service
+	 * Callback de JPA que se ejecuta automÃ¡ticamente ANTES de hacer un INSERT.
+	 * Garantiza que la fecha de creaciÃ³n SIEMPRE se establezca, independientemente
+	 * de desde dÃ³nde se persista la entidad y Evita duplicar lÃ³gica en mÃºltiples
+	 * mÃ©todos del Service
 	 */
 	@PrePersist
 	protected void onCreate() {
@@ -222,8 +222,8 @@ public class PolicyEntity {
 	}
 
 	/*
-	 * Callback de JPA que se ejecuta autom�ticamente ANTES de hacer un UPDATE.
-	 * Asegura consistencia de datos en BD y mantiene la l�gica de auditor�a b�sica
+	 * Callback de JPA que se ejecuta automÃ¡ticamente ANTES de hacer un UPDATE.
+	 * Asegura consistencia de datos en BD y mantiene la lÃ³gica de auditorÃ­a bÃ¡sica
 	 * encapsulada dentro de la entidad
 	 */
 	@PreUpdate

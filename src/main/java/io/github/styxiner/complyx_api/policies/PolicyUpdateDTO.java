@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 
 /*
  * DTO de entrada para actualizar una Policy.
- * Permite modificar datos básicos.
+ * Permite modificar datos bï¿½sicos.
  */
 @Schema(description = "Solicitud para actualizar una politica existente")
 public class PolicyUpdateDTO {
@@ -17,6 +17,8 @@ public class PolicyUpdateDTO {
 	private String name;
 	@NotBlank
 	private String version;
+	@NotBlank
+	private String description;
 	@NotNull
 	@Schema(description = "Severidad global de la politica")
 	private Severity severity;
@@ -57,6 +59,9 @@ public class PolicyUpdateDTO {
 	}
 	public void setElements(List<PolicyElementUpdateDTO> elements) {
 		this.elements = elements;
+	}
+	public String getDescription() {
+		return description;
 	}
 	
 }

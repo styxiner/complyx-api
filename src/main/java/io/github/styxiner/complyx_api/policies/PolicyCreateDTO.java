@@ -7,13 +7,15 @@ import java.util.List;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /*
- * DTO de entrada para la creación de una Policy.
- * Permite construir la jerarquía completa (elements, checks, remediations).
+ * DTO de entrada para la creaciï¿½n de una Policy.
+ * Permite construir la jerarquï¿½a completa (elements, checks, remediations).
  */
 @Schema(description = "Solicitud para crear una nueva politica")
 public class PolicyCreateDTO {
 	@NotBlank
 	private String name;
+	@NotBlank
+	private String description;
 	@NotBlank
 	private String version;
 	@NotNull
@@ -56,6 +58,9 @@ public class PolicyCreateDTO {
 	}
 	public void setStatus(PolicyStatus status) {
 		this.status = status;
+	}
+	public String getDescription() {
+		return description;
 	}
 
 }

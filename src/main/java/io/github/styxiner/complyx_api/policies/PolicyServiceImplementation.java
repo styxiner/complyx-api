@@ -17,16 +17,16 @@ import io.github.styxiner.complyx_api.agents.AgentGroupRepository;
 import io.github.styxiner.complyx_api.agents.AgentRepository;
 
 /*
- * Servicio principal de gestión de Policies.
+ * Servicio principal de gestiï¿½n de Policies.
  *
  * RESPONSABILIDAD:
  * - Validar datos de entrada
- * - Orquestar lógica de dominio
+ * - Orquestar lï¿½gica de dominio
  * - Delegar mapping sin romper JPA
  *
  * NOTA:
- * La gestión de RegulationSection está preparada pero comentada
- * hasta que el módulo correspondiente esté disponible.
+ * La gestiï¿½n de RegulationSection estï¿½ preparada pero comentada
+ * hasta que el mï¿½dulo correspondiente estï¿½ disponible.
  */
 @Service
 @Transactional
@@ -37,7 +37,7 @@ public class PolicyServiceImplementation implements PolicyService {
 	private final PolicyMapperImplementation policyMapperImplementation;
 	private final AgentRepository agentRepository;
 	private final AgentGroupRepository agentGroupRepository;
-// FUTURO: integración con regulation
+// FUTURO: integraciï¿½n con regulation
 	/* private final RegulationSectionRepository regulationRepository; */
 
 	public PolicyServiceImplementation(PolicyRepository policyRepository, PolicyMapper policyMapper,
@@ -96,7 +96,7 @@ public class PolicyServiceImplementation implements PolicyService {
 	@Override
 	public PolicyDetailDTO createPolicy(PolicyCreateDTO dto) {
 
-		validateCreate(dto);
+		//validateCreate(dto);
 
 		// FUTURO: cargar regulation sections
 		/*
@@ -104,7 +104,7 @@ public class PolicyServiceImplementation implements PolicyService {
 		 * resolveRegulationsFromCreate(dto);
 		 */
 
-		PolicyEntity entity = policyMapperImplementation.toEntity(dto, new HashMap<>() // vacío temporal FUTURO cambiar por
+		PolicyEntity entity = policyMapperImplementation.toEntity(dto, new HashMap<>() // vacï¿½o temporal FUTURO cambiar por
 		// regulationMap
 		);
 
@@ -125,7 +125,7 @@ public class PolicyServiceImplementation implements PolicyService {
 					}
 				});
 
-		validateUpdate(dto);
+		//validateUpdate(dto);
 
 		// FUTURO: cargar regulation sections
 		/*
@@ -155,8 +155,8 @@ public class PolicyServiceImplementation implements PolicyService {
 				});
 
 		/*
-		 * IMPORTANTE: ManyToMany no siempre se limpia automáticamente de forma
-		 * explícita en memoria, así que rompemos relaciones para evitar
+		 * IMPORTANTE: ManyToMany no siempre se limpia automï¿½ticamente de forma
+		 * explï¿½cita en memoria, asï¿½ que rompemos relaciones para evitar
 		 * inconsistencias.
 		 */
 
@@ -248,7 +248,7 @@ public class PolicyServiceImplementation implements PolicyService {
 				});
 
 		/*
-		 * Evita duplicados en la relación ManyToMany.
+		 * Evita duplicados en la relaciï¿½n ManyToMany.
 		 */
 		if (!policy.getGroups().contains(group)) {
 			policy.addGroup(group);
@@ -286,7 +286,7 @@ public class PolicyServiceImplementation implements PolicyService {
 	// REGULACION (FUTURO)
 
 	/*
-	 * activar cuando el módulo de regulations esté disponible
+	 * activar cuando el mï¿½dulo de regulations estï¿½ disponible
 	 *
 	 * Extrae IDs desde DTO y carga entidades desde DB.
 	 */
@@ -334,7 +334,7 @@ public class PolicyServiceImplementation implements PolicyService {
 			regulationMap.put(section.getId(), section);
 		}
 
-		// Validación importante: si faltan IDs, devolvemos error y no dejamos referencias rotas.
+		// Validaciï¿½n importante: si faltan IDs, devolvemos error y no dejamos referencias rotas.
 		if (regulationMap.size() != ids.size()) {
 			throw new IllegalArgumentException("One or more regulation sections do not exist");
 		}

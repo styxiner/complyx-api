@@ -27,7 +27,7 @@ public class UserEntity {
 	@Column(unique = true, nullable = false)
 	private String email;
 	
-	@Column(name = "password_hash", nullable = false)
+	@Column(name = "salted_password_hash", nullable = false)
 	private String passwordHash;
 	
 	@Column(nullable = false)

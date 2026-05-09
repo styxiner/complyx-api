@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /*
- * Servicio que contiene la l�gica de negocio para los grupos de agentes (interact�a con entidades directamente)
+ * Servicio que contiene la lÃ³gica de negocio para los grupos de agentes (interactÃºa con entidades directamente)
  */
 @Service
 @Transactional(readOnly = true)
@@ -25,8 +25,8 @@ public class AgentGroupService {
 		this.groupMapper = groupMapper;
 	}
 	/*
-	 * Usamos una clase an�nima para crear un objeto que implementa una interfaz en
-	 * particular y poder usarlo libremente sin definir expl�citamente m�s clases y
+	 * Usamos una clase anÃ³nima para crear un objeto que implementa una interfaz en
+	 * particular y poder usarlo libremente sin definir explÃ­citamente mÃ¡s clases y
 	 * no usar lambdas
 	 */
 
@@ -34,7 +34,7 @@ public class AgentGroupService {
 	public Page<AgentGroupDTO> findAll(AgentGroupFilter filter, Pageable pageable) {
 		Specification<AgentGroupEntity> spec = AgentGroupSpecifications.build(filter);// Construimos la especificacion a
 																						// partir del filtro
-		Page<AgentGroupEntity> page = groupRepository.findAll(spec, pageable);// Ejecutamos la query con paginaci�n
+		Page<AgentGroupEntity> page = groupRepository.findAll(spec, pageable);// Ejecutamos la query con paginaciÃ³n
 		return page.map(new Function<AgentGroupEntity, AgentGroupDTO>() { // Convertimos Entity -> DTO
 			@Override
 			public AgentGroupDTO apply(AgentGroupEntity group) {
@@ -60,7 +60,7 @@ public class AgentGroupService {
 	public AgentGroupDTO create(AgentGroupCreateDTO dto) {
 
 		if (groupRepository.existsByName(dto.getName())) {
-			throw new RuntimeException("Group with this name already exists");// Validaci�n: nombre �nico
+			throw new RuntimeException("Group with this name already exists");// ValidaciÃ³n: nombre Ãºnico
 		}
 		AgentGroupEntity group = groupMapper.toEntity(dto);// Convertimos DTO -> Entity
 		AgentGroupEntity saved = groupRepository.save(group);// Guardamos en BD
@@ -97,7 +97,7 @@ public class AgentGroupService {
 			}
 			group.setName(dto.getName());
 		}
-		// Actualizar descripci�n
+		// Actualizar descripciÃ³n
 		if (dto.getDescription() != null) {if (dto.getDescription().isBlank()) {
 			throw new IllegalArgumentException("Group description cannot be blank");
 		}
