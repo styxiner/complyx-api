@@ -1,17 +1,39 @@
 package io.github.styxiner.complyx_api.risk_modeling;
 
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-
+@Entity
+@Table(name = "threats")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ThreatEntity {
-	private String name;
-	private String description;
-	private String category;
-	private BigDecimal severityScore;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(updatable = false, nullable = false)
+    private UUID id;
+
+    @Column(nullable = false, unique = true, length = 100)
+    private String name;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    @Column(length = 50)
+    private String category;
+
+    @Column(name = "severity_score", precision = 3, scale = 1)
+    private BigDecimal severityScore;
+
+    @CreationTimestamp
+    @Column(name = "created_date", nullable = false, updatable = false)
+    private LocalDateTime createdDate;
 }

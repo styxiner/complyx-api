@@ -19,7 +19,7 @@ import jakarta.validation.Valid;
 @RestController
 //@RequestMapping define la ruta base para todos los endpoints de este controlador.
 @RequestMapping("/api/policies")
-@Tag(name = "Policies", description = "GestiÃ³n de polÃ­ticas de cumplimiento y normativas")
+@Tag(name = "Policies", description = "Gestion de poli­ticas de cumplimiento y normativas")
 public class PolicyController {
 
 	private final PolicyService policyService;
@@ -29,18 +29,18 @@ public class PolicyController {
 	}
 // GET paginado con filtros	
 	@GetMapping
-    @Operation(summary = "Obtener todas las polÃ­ticas con filtros y paginaciÃ³n")
-    @ApiResponses({ @ApiResponse(responseCode = "200", description = "PÃ¡gina de polÃ­ticas obtenida con Ã©xito") })
+    @Operation(summary = "Obtener todas las poli­ticas con filtros y paginacion")
+    @ApiResponses({ @ApiResponse(responseCode = "200", description = "Pagina de poli­ticas obtenida con exito") })
 	public ResponseEntity<Page<PolicySummaryDTO>> getPolicies(@ParameterObject PolicyFilter filter, @ParameterObject Pageable pageable) {
 
 		return ResponseEntity.ok(policyService.getAllPolicies(filter, pageable));
 	}
   // GET by ID
     @GetMapping("/{policyId}")
-	@Operation(summary = "Obtener detalle completo de una polÃ­tica por su ID")
+	@Operation(summary = "Obtener detalle completo de una poli­tica por su ID")
     @ApiResponses({ 
-        @ApiResponse(responseCode = "200", description = "PolÃ­tica encontrada"),
-        @ApiResponse(responseCode = "404", description = "PolÃ­tica no encontrada") 
+        @ApiResponse(responseCode = "200", description = "Politica encontrada"),
+        @ApiResponse(responseCode = "404", description = "Politica no encontrada") 
     })
 	public ResponseEntity<PolicyDetailDTO> getPolicyById(@PathVariable UUID policyId) {
 
@@ -51,8 +51,8 @@ public class PolicyController {
     @PostMapping
     @Operation(summary = "Crear una nueva polÃ­tica")
     @ApiResponses({ 
-        @ApiResponse(responseCode = "201", description = "PolÃ­tica creada con Ã©xito"),
-        @ApiResponse(responseCode = "400", description = "Datos de entrada invÃ¡lidos") 
+        @ApiResponse(responseCode = "201", description = "Politica creada con exito"),
+        @ApiResponse(responseCode = "400", description = "Datos de entrada invalidos") 
     })
 		public ResponseEntity<PolicyDetailDTO> createPolicy(@Valid @RequestBody PolicyCreateDTO dto) {
 		PolicyDetailDTO created = policyService.createPolicy(dto);
@@ -63,8 +63,8 @@ public class PolicyController {
     @PutMapping("/{policyId}")
     @Operation(summary = "Actualizar una polÃ­tica existente")
     @ApiResponses({ 
-        @ApiResponse(responseCode = "200", description = "PolÃ­tica actualizada"),
-        @ApiResponse(responseCode = "404", description = "PolÃ­tica no encontrada") 
+        @ApiResponse(responseCode = "200", description = "Poli­tica actualizada"),
+        @ApiResponse(responseCode = "404", description = "Politica no encontrada") 
     })
 	public ResponseEntity<PolicyDetailDTO> updatePolicy(@Valid @PathVariable UUID policyId, @RequestBody PolicyUpdateDTO dto) {
 
@@ -76,7 +76,7 @@ public class PolicyController {
     @Operation(summary = "Eliminar una polÃ­tica")
     @ApiResponses({ 
         @ApiResponse(responseCode = "204", description = "Politica eliminada correctamente"),
-        @ApiResponse(responseCode = "404", description = "PolÃ­tica no encontrada") 
+        @ApiResponse(responseCode = "404", description = "Politica no encontrada") 
     })
 	public ResponseEntity<Void> deletePolicy(@PathVariable UUID policyId) {
 
