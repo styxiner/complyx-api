@@ -19,7 +19,7 @@ import jakarta.validation.Valid;
 @RestController
 //@RequestMapping define la ruta base para todos los endpoints de este controlador.
 @RequestMapping("/api/policies")
-@Tag(name = "Policies", description = "Gestion de poli­ticas de cumplimiento y normativas")
+@Tag(name = "Policies", description = "Gestion de politicas de cumplimiento y normativas.")
 public class PolicyController {
 
 	private final PolicyService policyService;
@@ -37,7 +37,7 @@ public class PolicyController {
 	}
   // GET by ID
     @GetMapping("/{policyId}")
-	@Operation(summary = "Obtener detalle completo de una poli­tica por su ID")
+	@Operation(summary = "Obtener detalle completo de una politica por su ID")
     @ApiResponses({ 
         @ApiResponse(responseCode = "200", description = "Politica encontrada"),
         @ApiResponse(responseCode = "404", description = "Politica no encontrada") 
@@ -49,7 +49,7 @@ public class PolicyController {
  
 	// CREATE
     @PostMapping
-    @Operation(summary = "Crear una nueva polÃ­tica")
+    @Operation(summary = "Crear una nueva política")
     @ApiResponses({ 
         @ApiResponse(responseCode = "201", description = "Politica creada con exito"),
         @ApiResponse(responseCode = "400", description = "Datos de entrada invalidos") 
@@ -73,7 +73,7 @@ public class PolicyController {
 
 	// DELETE
     @DeleteMapping("/{policyId}")
-    @Operation(summary = "Eliminar una polÃ­tica")
+    @Operation(summary = "Eliminar una política")
     @ApiResponses({ 
         @ApiResponse(responseCode = "204", description = "Politica eliminada correctamente"),
         @ApiResponse(responseCode = "404", description = "Politica no encontrada") 
