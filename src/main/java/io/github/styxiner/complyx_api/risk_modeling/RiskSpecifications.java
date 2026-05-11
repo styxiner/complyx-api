@@ -35,11 +35,16 @@ public class RiskSpecifications {
      * El resultado es un AND de todos los predicados activos.
      */
     public static Specification<RiskEntity> build(RiskFilter riskFilter) {
-        if (riskFilter == null) return Specification.where(null);
 
-        return Specification.where(byAgentId(riskFilter.getAgentId()))
-                .and(byStatus(riskFilter.getStatus()))
-                .and(byRiskLevel(riskFilter.getRiskLevel()))
-                .and(byThreatId(riskFilter.getThreatId()));
+        if (riskFilter == null) {
+            return Specification.allOf();
+        }
+
+        return Specification.allOf(
+                byAgentId(riskFilter.getAgentId()),
+                byStatus(riskFilter.getStatus()),
+                byRiskLevel(riskFilter.getRiskLevel()),
+                byThreatId(riskFilter.getThreatId())
+        );
     }
 }

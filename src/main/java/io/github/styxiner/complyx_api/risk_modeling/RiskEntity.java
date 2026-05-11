@@ -14,10 +14,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "risks")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class RiskEntity {
 
     @Id
@@ -33,7 +29,51 @@ public class RiskEntity {
     @JoinColumn(name = "agent_id", nullable = false)
     private AgentEntity agent;
 
-    @Column(precision = 3, scale = 1)
+    public void setId(UUID id) {
+		this.id = id;
+	}
+
+	public void setThreat(ThreatEntity threat) {
+		this.threat = threat;
+	}
+
+	public void setAgent(AgentEntity agent) {
+		this.agent = agent;
+	}
+
+	public void setImpact(BigDecimal impact) {
+		this.impact = impact;
+	}
+
+	public void setProbability(BigDecimal probability) {
+		this.probability = probability;
+	}
+
+	public void setRiskLevel(RiskLevel riskLevel) {
+		this.riskLevel = riskLevel;
+	}
+
+	public void setStatus(RiskStatus status) {
+		this.status = status;
+	}
+
+	public void setCreatedDate(LocalDateTime createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public void setReviewDate(LocalDateTime reviewDate) {
+		this.reviewDate = reviewDate;
+	}
+
+	public void setAcceptanceDate(LocalDateTime acceptanceDate) {
+		this.acceptanceDate = acceptanceDate;
+	}
+
+	public void setPolicies(Set<PolicyEntity> policies) {
+		this.policies = policies;
+	}
+
+	@Column(precision = 3, scale = 1)
     private BigDecimal impact;
 
     @Column(precision = 3, scale = 1)
@@ -67,6 +107,70 @@ public class RiskEntity {
         joinColumns = @JoinColumn(name = "risk_id"),
         inverseJoinColumns = @JoinColumn(name = "policy_id")
     )
-    @Builder.Default
     private Set<PolicyEntity> policies = new HashSet<>();
+
+	public UUID getId() {
+		return id;
+	}
+
+	public ThreatEntity getThreat() {
+		return threat;
+	}
+
+	public AgentEntity getAgent() {
+		return agent;
+	}
+
+	public BigDecimal getImpact() {
+		return impact;
+	}
+
+	public BigDecimal getProbability() {
+		return probability;
+	}
+
+	public RiskLevel getRiskLevel() {
+		return riskLevel;
+	}
+
+	public RiskStatus getStatus() {
+		return status;
+	}
+
+	public LocalDateTime getCreatedDate() {
+		return createdDate;
+	}
+
+	public LocalDateTime getReviewDate() {
+		return reviewDate;
+	}
+
+	public LocalDateTime getAcceptanceDate() {
+		return acceptanceDate;
+	}
+
+	public Set<PolicyEntity> getPolicies() {
+		return policies;
+	}
+
+	public RiskEntity(UUID id, ThreatEntity threat, AgentEntity agent, BigDecimal impact, BigDecimal probability,
+			RiskLevel riskLevel, RiskStatus status, LocalDateTime createdDate, LocalDateTime reviewDate,
+			LocalDateTime acceptanceDate, Set<PolicyEntity> policies) {
+		super();
+		this.id = id;
+		this.threat = threat;
+		this.agent = agent;
+		this.impact = impact;
+		this.probability = probability;
+		this.riskLevel = riskLevel;
+		this.status = status;
+		this.createdDate = createdDate;
+		this.reviewDate = reviewDate;
+		this.acceptanceDate = acceptanceDate;
+		this.policies = policies;
+	}
+
+	public RiskEntity() {
+		// TODO Auto-generated constructor stub
+	}
 }

@@ -14,37 +14,36 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/threats")
-@RequiredArgsConstructor
 public class ThreatController {
 
     private final ThreatService threatService;
 
-    @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'ANALYST')")
+    public ThreatController(ThreatService threatService) {
+		this.threatService = threatService;
+	}
+
+	@GetMapping
     public Page<ThreatDTO> getThreats(
             @PageableDefault(size = 20, sort = "name") Pageable pageable) {
         return threatService.findAll(pageable);
     }
 
     @GetMapping("/{threatId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'ANALYST')")
     public ThreatDTO getThreatById(@PathVariable UUID threatId) {
         return threatService.findById(threatId);
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ThreatDTO> createThreat(@Valid @RequestBody ThreatCreateDTO dto) {
         ThreatDTO created = threatService.create(dto);
         var location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(created.id())
+                .buildAndExpand(created.getId())
                 .toUri();
         return ResponseEntity.created(location).body(created);
     }
 
     @PatchMapping("/{threatId}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ThreatDTO updateThreat(
             @PathVariable UUID threatId,
             @Valid @RequestBody ThreatUpdateDTO dto) {
@@ -52,7 +51,6 @@ public class ThreatController {
     }
 
     @DeleteMapping("/{threatId}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteThreat(@PathVariable UUID threatId) {
         threatService.delete(threatId);
         return ResponseEntity.noContent().build();

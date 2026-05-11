@@ -1,6 +1,5 @@
 package io.github.styxiner.complyx_api.risk_modeling;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -11,14 +10,19 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ThreatService {
 
     private final ThreatRepository threatRepository;
     private final RiskMapper mapper;
 
-    public Page<ThreatDTO> findAll(Pageable pageable) {
+    public ThreatService(ThreatRepository threatRepository, RiskMapper mapper) {
+		super();
+		this.threatRepository = threatRepository;
+		this.mapper = mapper;
+	}
+
+	public Page<ThreatDTO> findAll(Pageable pageable) {
         return threatRepository.findAll(pageable)
                 .map(mapper::toThreatDTO);
     }
@@ -32,20 +36,21 @@ public class ThreatService {
 
     @Transactional
     public ThreatDTO create(ThreatCreateDTO dto) {
-        if (threatRepository.existsByName(dto.name())) {
+        if (threatRepository.existsByName(dto.getName())) {
             throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "Ya existe una amenaza con el nombre: " + dto.name());
+                    HttpStatus.CONFLICT, "Ya existe una amenaza con el nombre: " + dto.getName());
         }
 
-        ThreatEntity entity = ThreatEntity.builder()
-                .name(dto.name())
-                .description(dto.description())
-                .category(dto.category())
-                .severityScore(dto.severityScore())
-                .build();
+        ThreatEntity entity = new ThreatEntity();
+        entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
+        entity.setCategory(dto.getCategory());
+        entity.setSeverityScore(dto.getSeverityScore());
 
         return mapper.toThreatDTO(threatRepository.save(entity));
     }
+    
+    
 
     @Transactional
     public ThreatDTO update(UUID threatId, ThreatUpdateDTO dto) {

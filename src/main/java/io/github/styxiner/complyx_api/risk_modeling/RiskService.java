@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class RiskService {
 
@@ -25,11 +24,18 @@ public class RiskService {
     private final PolicyRepository policyRepository;
     private final RiskMapper mapper;
 
-    // ---------------------------------------------------------------------------
-    // Consultas
-    // ---------------------------------------------------------------------------
 
-    public Page<RiskDTO> findAll(RiskFilter filter, Pageable pageable) {
+    public RiskService(RiskRepository riskRepository, ThreatRepository threatRepository,
+			AgentRepository agentRepository, PolicyRepository policyRepository, RiskMapper mapper) {
+		super();
+		this.riskRepository = riskRepository;
+		this.threatRepository = threatRepository;
+		this.agentRepository = agentRepository;
+		this.policyRepository = policyRepository;
+		this.mapper = mapper;
+	}
+
+	public Page<RiskDTO> findAll(RiskFilter filter, Pageable pageable) {
         return riskRepository.findAll(RiskSpecifications.build(filter), pageable)
                 .map(mapper::toRiskDTO);
     }
@@ -47,24 +53,23 @@ public class RiskService {
 
     @Transactional
     public RiskDTO create(RiskCreateDTO dto) {
-        var threat = threatRepository.findById(dto.threatId())
+        var threat = threatRepository.findById(dto.getThreatId())
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Amenaza no encontrada: " + dto.threatId()));
+                        HttpStatus.NOT_FOUND, "Amenaza no encontrada: " + dto.getThreatId()));
 
-        var agent = agentRepository.findById(dto.agentId())
+        var agent = agentRepository.findById(dto.getAgentId())
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Agente no encontrado: " + dto.agentId()));
+                        HttpStatus.NOT_FOUND, "Agente no encontrado: " + dto.getAgentId()));
 
-        RiskLevel level = computeRiskLevel(dto.impact(), dto.probability());
+        RiskLevel level = computeRiskLevel(dto.getImpact(), dto.getProbability());
 
-        RiskEntity risk = RiskEntity.builder()
-                .threat(threat)
-                .agent(agent)
-                .impact(dto.impact())
-                .probability(dto.probability())
-                .riskLevel(level)
-                .status(RiskStatus.OPEN)
-                .build();
+        RiskEntity risk = new RiskEntity();
+        risk.setThreat(threat);
+        risk.setAgent(agent);
+        risk.setImpact(dto.getImpact());
+        risk.setProbability(dto.getProbability());
+        risk.setRiskLevel(level);
+        risk.setStatus(RiskStatus.OPEN);
 
         return mapper.toRiskDTO(riskRepository.save(risk));
     }
@@ -81,9 +86,9 @@ public class RiskService {
         mapper.updateRiskFromDTO(dto, risk);
 
         // Recalcular nivel si cambian impacto o probabilidad
-        if (dto.impact() != null || dto.probability() != null) {
-            BigDecimal impact      = dto.impact()      != null ? dto.impact()      : risk.getImpact();
-            BigDecimal probability = dto.probability() != null ? dto.probability() : risk.getProbability();
+        if (dto.getImpact() != null || dto.getProbability() != null) {
+            BigDecimal impact      = dto.getImpact()      != null ? dto.getImpact()      : risk.getImpact();
+            BigDecimal probability = dto.getProbability() != null ? dto.getProbability() : risk.getProbability();
             risk.setRiskLevel(computeRiskLevel(impact, probability));
         }
 

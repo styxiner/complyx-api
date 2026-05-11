@@ -7,4 +7,18 @@ public class RiskFilter {
 	private RiskStatus status;
 	private RiskLevel riskLevel;
 	private UUID threatId;
+	public UUID getAgentId() {
+		return agentId;
+	}
+	public RiskStatus getStatus() {
+		return status;
+	}
+	public RiskLevel getRiskLevel() {
+		return riskLevel;
+	}
+	public UUID getThreatId() {
+		return threatId;
+	}
+	
+	
 }
