@@ -8,6 +8,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,7 +28,7 @@ public class PolicyController {
 	public PolicyController(PolicyService policyService) {
 		this.policyService = policyService;
 	}
-// GET paginado con filtros	
+	@PreAuthorize("hasRole('ADMIN', 'TECNICO', 'AUDITOR')")
 	@GetMapping
     @Operation(summary = "Obtener todas las poli­ticas con filtros y paginacion")
     @ApiResponses({ @ApiResponse(responseCode = "200", description = "Pagina de poli­ticas obtenida con exito") })
@@ -35,7 +36,7 @@ public class PolicyController {
 
 		return ResponseEntity.ok(policyService.getAllPolicies(filter, pageable));
 	}
-  // GET by ID
+	@PreAuthorize("hasRole('ADMIN', 'TECNICO', 'AUDITOR')")
     @GetMapping("/{policyId}")
 	@Operation(summary = "Obtener detalle completo de una politica por su ID")
     @ApiResponses({ 
@@ -47,7 +48,7 @@ public class PolicyController {
 		return ResponseEntity.ok(policyService.getPolicyById(policyId));
 	}
  
-	// CREATE
+	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
     @PostMapping
     @Operation(summary = "Crear una nueva política")
     @ApiResponses({ 
@@ -59,7 +60,8 @@ public class PolicyController {
 		URI location = URI.create("/api/policies/" + created.getId()); // se informa la URI del recurso creado.
 		return ResponseEntity.created(location).body(created);
     }
-	// UPDATE
+
+	@PreAuthorize("hasRole('ADMIN', 'TECNICO'')")
     @PutMapping("/{policyId}")
     @Operation(summary = "Actualizar una polÃ­tica existente")
     @ApiResponses({ 
@@ -71,7 +73,7 @@ public class PolicyController {
 		return ResponseEntity.ok(policyService.updatePolicy(policyId, dto));
 	}
 
-	// DELETE
+	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
     @DeleteMapping("/{policyId}")
     @Operation(summary = "Eliminar una política")
     @ApiResponses({ 
@@ -84,7 +86,7 @@ public class PolicyController {
 		return ResponseEntity.noContent().build();
 	}
 
-	// ASSIGN AGENT
+	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
     @PostMapping("/{policyId}/agents/{agentId}")
     @Operation(summary = "Asiganar un agente")
     @ApiResponses({ 
@@ -97,7 +99,7 @@ public class PolicyController {
 		return ResponseEntity.noContent().build();
 	}
 
-	// UNASSIGN AGENT
+	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
     @DeleteMapping("/{policyId}/agents/{agentId}")
     @Operation(summary = "Desasignar agente")
     @ApiResponses({ 
@@ -109,7 +111,8 @@ public class PolicyController {
 		policyService.unAssignToAgent(policyId, agentId);
 		return ResponseEntity.noContent().build();
 	}
-// ASSIGN GROUP
+	
+	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
 	@PostMapping("/{policyId}/groups/{groupId}")
     @Operation(summary = "Asignar un grupo de agentes")
     @ApiResponses({ 
@@ -123,7 +126,7 @@ public class PolicyController {
 		return ResponseEntity.noContent().build(); 
 	}
 
-	// UNASSIGN GROUP
+	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
     @DeleteMapping("/{policyId}/groups/{groupId}")
 	@Operation(summary = "Desasignar un grupo de agentes")
     @ApiResponses({ 
@@ -136,7 +139,7 @@ public class PolicyController {
 		return ResponseEntity.noContent().build();
 	}
 
-	// GET BY AGENT
+	@PreAuthorize("hasRole('ADMIN', 'TECNICO', 'AUDITOR')")
     @Operation(summary = "Conseguir politica por su agente")
     @ApiResponses({ 
         @ApiResponse(responseCode = "204", description = "Lista de politicas obtenida correctamente"),

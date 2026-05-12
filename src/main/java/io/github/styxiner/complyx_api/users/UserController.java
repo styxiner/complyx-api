@@ -7,6 +7,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,7 +21,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api")
 @Tag(name = "Users", description = "Gestión de usuarios y asignación de roles")
 public class UserController {
 
@@ -30,7 +31,8 @@ public class UserController {
         this.userService = service;
     }
 
-    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/users")
     @Operation(summary = "Obtener todos los usuarios con filtros y paginación")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Página de usuarios obtenida con éxito")
@@ -46,8 +48,9 @@ public class UserController {
             @Parameter(hidden = true) Pageable pageable) {
         return ResponseEntity.ok(userService.getAllUsers(filter, pageable));
     }
-
-    @GetMapping("/{userId}")
+    
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/users/{userId}")
     @Operation(summary = "Obtener un usuario por su ID")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Usuario encontrado"),
@@ -57,7 +60,8 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(userId));
     }
 
-    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/users")
     @Operation(summary = "Crear un nuevo usuario")
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Usuario creado con éxito"),
@@ -70,7 +74,8 @@ public class UserController {
         return ResponseEntity.created(location).body(created);
     }
 
-    @PutMapping("/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/users/{userId}")
     @Operation(summary = "Actualizar un usuario existente")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Usuario actualizado"),
@@ -83,7 +88,8 @@ public class UserController {
         return ResponseEntity.ok(userService.update(dto));
     }
 
-    @DeleteMapping("/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/users/{userId}")
     @Operation(summary = "Eliminar un usuario")
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Usuario eliminado correctamente"),
@@ -94,7 +100,8 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{userId}/roles/{roleId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/users/{userId}/roles/{roleId}")
     @Operation(summary = "Asignar un rol a un usuario")
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Rol asignado correctamente"),
@@ -107,7 +114,8 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{userId}/roles/{roleId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/users/{userId}/roles/{roleId}")
     @Operation(summary = "Desasignar un rol de un usuario")
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Rol desasignado correctamente"),

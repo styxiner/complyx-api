@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -31,6 +32,7 @@ public class ThreatController {
         this.threatService = threatService;
     }
 
+    @PreAuthorize("hasRole('ADMIN', 'TECNICO', 'AUDITOR')")
     @GetMapping
     @Operation(summary = "Obtener todas las amenazas con paginación")
     @ApiResponses({
@@ -46,6 +48,7 @@ public class ThreatController {
         return ResponseEntity.ok(threatService.findAll(pageable));
     }
 
+    @PreAuthorize("hasRole('ADMIN', 'TECNICO', 'AUDITOR')")
     @GetMapping("/{threatId}")
     @Operation(summary = "Obtener una amenaza por su ID")
     @ApiResponses({
@@ -56,6 +59,7 @@ public class ThreatController {
         return ResponseEntity.ok(threatService.findById(threatId));
     }
 
+    @PreAuthorize("hasRole('ADMIN', 'TECNICO')")
     @PostMapping
     @Operation(summary = "Crear una nueva amenaza")
     @ApiResponses({
@@ -73,6 +77,7 @@ public class ThreatController {
         ).body(created);
     }
 
+    @PreAuthorize("hasRole('ADMIN', 'TECNICO')")
     @PatchMapping("/{threatId}")
     @Operation(summary = "Actualizar parcialmente una amenaza")
     @ApiResponses({
@@ -85,6 +90,7 @@ public class ThreatController {
         return ResponseEntity.ok(threatService.update(threatId, dto));
     }
 
+    @PreAuthorize("hasRole('ADMIN', 'TECNICO')")
     @DeleteMapping("/{threatId}")
     @Operation(summary = "Eliminar una amenaza")
     @ApiResponses({

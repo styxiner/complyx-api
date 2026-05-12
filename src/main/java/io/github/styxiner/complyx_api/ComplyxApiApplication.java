@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import io.github.styxiner.complyx_api.users.RoleEntity;
@@ -15,6 +16,7 @@ import io.github.styxiner.complyx_api.users.UserEntity;
 import io.github.styxiner.complyx_api.users.UserRepository;
 
 @SpringBootApplication
+@EnableMethodSecurity
 public class ComplyxApiApplication implements CommandLineRunner {
 
     public static void main(String[] args) {

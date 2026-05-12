@@ -7,6 +7,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,6 +25,7 @@ public class AgentGroupController {
 		this.groupService = groupService;
 	}
 
+	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
 	@GetMapping
 	@Operation(summary = "Obtener todos los grupos de agentes con filtros y paginacion")
 	@ApiResponses({
@@ -33,6 +35,7 @@ public class AgentGroupController {
 		return ResponseEntity.ok(groupService.findAll(filter, pageable));
 	}
 
+	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
 	@GetMapping("/{groupId}")
 	@Operation(summary = "Obtener grupo por ID")
 	@ApiResponses({
@@ -44,6 +47,7 @@ public class AgentGroupController {
 	}
 
 	// Crea un grupo nuevo y devuelve la URL del recurso creado.
+	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
 	@PostMapping
 	@Operation(summary = "Crear un nuevo grupo")
 	@ApiResponses({
@@ -57,6 +61,7 @@ public class AgentGroupController {
 		return ResponseEntity.created(location).body(created);
 	}
 
+	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
 	@DeleteMapping("/{groupId}")
 	@Operation(summary = "Eliminar grupo")
 	@ApiResponses({
@@ -68,6 +73,7 @@ public class AgentGroupController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
 	@PatchMapping("/{groupId}")
 	@Operation(summary = "Actualizar grupo parcialmente")
 	@ApiResponses({

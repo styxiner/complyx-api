@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -32,6 +33,7 @@ public class RiskController {
         this.riskService = riskService;
     }
 
+    @PreAuthorize("hasRole('ADMIN', 'TECNICO', 'AUDITOR')")
     @GetMapping
     @Operation(summary = "Obtener todos los riesgos con filtros y paginación")
     @ApiResponses({
@@ -48,6 +50,7 @@ public class RiskController {
         return ResponseEntity.ok(riskService.findAll(filter, pageable));
     }
 
+    @PreAuthorize("hasRole('ADMIN', 'TECNICO', 'AUDITOR')")
     @GetMapping("/{riskId}")
     @Operation(summary = "Obtener detalle de un riesgo por su ID")
     @ApiResponses({
@@ -58,6 +61,7 @@ public class RiskController {
         return ResponseEntity.ok(riskService.findById(riskId));
     }
 
+    @PreAuthorize("hasRole('ADMIN', 'TECNICO')")
     @PostMapping
     @Operation(summary = "Crear un nuevo riesgo")
     @ApiResponses({
@@ -74,6 +78,7 @@ public class RiskController {
         return ResponseEntity.created(location).body(created);
     }
 
+    @PreAuthorize("hasRole('ADMIN', 'TECNICO')")
     @PatchMapping("/{riskId}")
     @Operation(summary = "Actualizar parcialmente un riesgo")
     @ApiResponses({
@@ -87,6 +92,7 @@ public class RiskController {
         return ResponseEntity.ok(riskService.update(riskId, dto));
     }
 
+    @PreAuthorize("hasRole('ADMIN', 'TECNICO')")
     @PostMapping("/{riskId}/close")
     @Operation(summary = "Cerrar un riesgo")
     @ApiResponses({
@@ -98,6 +104,7 @@ public class RiskController {
         return ResponseEntity.ok(riskService.close(riskId));
     }
 
+    @PreAuthorize("hasRole('ADMIN', 'TECNICO')")
     @PostMapping("/{riskId}/accept")
     @Operation(summary = "Aceptar un riesgo")
     @ApiResponses({
@@ -109,6 +116,7 @@ public class RiskController {
         return ResponseEntity.ok(riskService.accept(riskId));
     }
 
+    @PreAuthorize("hasRole('ADMIN', 'TECNICO')")
     @PostMapping("/{riskId}/transfer")
     @Operation(summary = "Transferir un riesgo")
     @ApiResponses({
@@ -120,6 +128,7 @@ public class RiskController {
         return ResponseEntity.ok(riskService.transfer(riskId));
     }
 
+    @PreAuthorize("hasRole('ADMIN', 'TECNICO')")
     @PostMapping("/{riskId}/monitor")
     @Operation(summary = "Poner un riesgo en monitorización")
     @ApiResponses({
@@ -131,6 +140,7 @@ public class RiskController {
         return ResponseEntity.ok(riskService.setMonitoring(riskId));
     }
 
+    @PreAuthorize("hasRole('ADMIN', 'TECNICO')")
     @PutMapping("/{riskId}/policies/{policyId}")
     @Operation(summary = "Vincular una política mitigadora a un riesgo")
     @ApiResponses({
@@ -144,6 +154,7 @@ public class RiskController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN', 'TECNICO')")
     @DeleteMapping("/{riskId}/policies/{policyId}")
     @Operation(summary = "Desvincular una política mitigadora de un riesgo")
     @ApiResponses({

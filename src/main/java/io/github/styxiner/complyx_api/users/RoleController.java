@@ -7,6 +7,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,7 +21,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/roles")
+@RequestMapping("/api")
 @Tag(name = "Roles", description = "Gestión de roles de usuario")
 public class RoleController {
 
@@ -30,7 +31,8 @@ public class RoleController {
         this.roleService = service;
     }
 
-    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/roles")
     @Operation(summary = "Obtener todos los roles con filtros y paginación")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Página de roles obtenida con éxito")
@@ -46,7 +48,8 @@ public class RoleController {
         return ResponseEntity.ok(roleService.getAllRoles(filter, pageable));
     }
 
-    @GetMapping("/{roleId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/roles/{roleId}")
     @Operation(summary = "Obtener un rol por su ID")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Rol encontrado"),
@@ -56,7 +59,8 @@ public class RoleController {
         return ResponseEntity.ok(roleService.getRolesById(roleId));
     }
 
-    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/roles")
     @Operation(summary = "Crear un nuevo rol")
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Rol creado con éxito"),
@@ -69,7 +73,8 @@ public class RoleController {
         return ResponseEntity.created(location).body(created);
     }
 
-    @PutMapping("/{roleId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/roles/{roleId}")
     @Operation(summary = "Actualizar un rol existente")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Rol actualizado"),
@@ -82,7 +87,8 @@ public class RoleController {
         return ResponseEntity.ok(roleService.update(dto));
     }
 
-    @DeleteMapping("/{roleId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/roles/{roleId}")
     @Operation(summary = "Eliminar un rol")
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Rol eliminado correctamente"),

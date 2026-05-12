@@ -32,13 +32,6 @@ public class SecurityConfig {
         this.userDetailsService = uds;
     }
 
-    // Esto es de documentación vieja. En futuras versiones lo quitaran
-    /*public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }*/
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
@@ -51,12 +44,6 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         JwtAuthFilter jwtFilter = new JwtAuthFilter(jwtUtil, userDetailsService);
-        
-        // Que conste que con lambda esto es mucho más fácil
-        // Pero lo puedo pasar a clases anónimas
-                
-        // Esto está deprecated
-        //http.csrf().disable();	
 
         http.csrf(new Customizer<CsrfConfigurer<HttpSecurity>>() {
             @Override
@@ -65,9 +52,6 @@ public class SecurityConfig {
             }
         });
 
-        // Esto también esta obsoleto
-        //http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
         http.sessionManagement(new Customizer<SessionManagementConfigurer<HttpSecurity>>() {
             @Override
             public void customize(SessionManagementConfigurer<HttpSecurity> s) {
@@ -75,47 +59,18 @@ public class SecurityConfig {
             }
         });
 
-        //Deprecated tmb
-        //http.authenticationProvider(authenticationProvider());
-
         http.authenticationProvider(authenticationProvider());
 
-        // deprecated
-        // http.authorizeRequests()
-
-        /*
-        // endpoints publicos
-        	.requestMatchers("/api/auth/login").permitAll()
-        	.requestMatchers("/api/auth/refresh").permitAll()
-        	.requestMatchers("/v3/api-docs/**").permitAll()
-        	.requestMatchers("/swagger-ui/**").permitAll()
-        	.requestMatchers("/swagger-ui.html").permitAll()
-        	
-        	// enpoints que necesitan autenticación
-        	.requestMatchers("/api/auth/logout").authenticated()
-        	
-        	// endpoints que necesitan roles concretos
-        	.requestMatchers("/api/users/**").hasRole("ADMIN")
-        	.requestMatchers("/api/agents/**").hasAnyRole("ADMIN", "TECNICO")
-        	
-        	// filtro general independiente de los roles
-        	.anyRequest().authenticated();
-        */
         
         http.authorizeHttpRequests(new Customizer<AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry>() {
             @Override
             public void customize(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry auth) {
                 auth.requestMatchers("/api/auth/login").permitAll();
                 auth.requestMatchers("/api/auth/refresh").permitAll();
-                auth.requestMatchers("/v3/api-docs/**").permitAll();
-                auth.requestMatchers("/swagger-ui/**").permitAll();
-                auth.requestMatchers("/swagger-ui.html").permitAll();
+                auth.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll();
                 
                 auth.requestMatchers("/api/auth/logout").authenticated();
-                
-                auth.requestMatchers("/api/users/**").hasRole("ADMIN");
-                auth.requestMatchers("/api/agents/**").hasAnyRole("ADMIN", "TECNICO");
-                
+                                
                 auth.anyRequest().authenticated();
             }
         });
