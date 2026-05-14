@@ -10,8 +10,10 @@ import java.util.function.Supplier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class UserService {
@@ -27,7 +29,7 @@ public class UserService {
         this.mapper = mapper;
         this.encoder = encoder;
     }
-    
+        
     public Page<UserDTO> getAllUsers(UserFilter filter, Pageable pageable) {
     	
     	// Busca en la bbdd con los filtros dinámicos definidos
@@ -51,6 +53,15 @@ public class UserService {
     	});
     	
     	return mapper.toDTO(user);
+    }
+    
+    public UserDTO findByUsername(String username) {
+    	Optional<UserEntity> user = userRepo.findByUsername(username);
+    	if (!user.isPresent()) {
+    		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado: " + user);
+    	}
+    	
+    	return mapper.toDTO(user.get());
     }
 
     public UserDTO create(UserCreateDTO dto) {

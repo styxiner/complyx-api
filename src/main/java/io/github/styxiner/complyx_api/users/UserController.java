@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,6 +48,13 @@ public class UserController {
             @ParameterObject UserFilter filter,
             @Parameter(hidden = true) Pageable pageable) {
         return ResponseEntity.ok(userService.getAllUsers(filter, pageable));
+    }
+    
+    @GetMapping("/users/me")
+    public ResponseEntity<UserDTO> getMe(Authentication authentication) {
+    	
+    	String username = authentication.getName();
+    	return ResponseEntity.ok(userService.findByUsername(username));
     }
     
     @PreAuthorize("hasRole('ADMIN')")
