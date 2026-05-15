@@ -59,6 +59,7 @@ public class RoleController {
         return ResponseEntity.ok(roleService.getRolesById(roleId));
     }
 
+    /*
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/roles")
     @Operation(summary = "Crear un nuevo rol")
@@ -98,4 +99,5 @@ public class RoleController {
         roleService.delete(roleId);
         return ResponseEntity.noContent().build();
     }
+    */
 }
