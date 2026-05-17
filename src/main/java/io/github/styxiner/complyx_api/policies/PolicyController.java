@@ -28,7 +28,7 @@ public class PolicyController {
 	public PolicyController(PolicyService policyService) {
 		this.policyService = policyService;
 	}
-	@PreAuthorize("hasRole('ADMIN', 'TECNICO', 'AUDITOR')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO', 'AUDITOR')")
 	@GetMapping
     @Operation(summary = "Obtener todas las poli­ticas con filtros y paginacion")
     @ApiResponses({ @ApiResponse(responseCode = "200", description = "Pagina de poli­ticas obtenida con exito") })
@@ -36,7 +36,7 @@ public class PolicyController {
 
 		return ResponseEntity.ok(policyService.getAllPolicies(filter, pageable));
 	}
-	@PreAuthorize("hasRole('ADMIN', 'TECNICO', 'AUDITOR')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO', 'AUDITOR')")
     @GetMapping("/{policyId}")
 	@Operation(summary = "Obtener detalle completo de una politica por su ID")
     @ApiResponses({ 
@@ -48,7 +48,7 @@ public class PolicyController {
 		return ResponseEntity.ok(policyService.getPolicyById(policyId));
 	}
  
-	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
     @PostMapping
     @Operation(summary = "Crear una nueva política")
     @ApiResponses({ 
@@ -61,7 +61,7 @@ public class PolicyController {
 		return ResponseEntity.created(location).body(created);
     }
 
-	@PreAuthorize("hasRole('ADMIN', 'TECNICO'')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO'')")
     @PutMapping("/{policyId}")
     @Operation(summary = "Actualizar una polÃ­tica existente")
     @ApiResponses({ 
@@ -73,7 +73,7 @@ public class PolicyController {
 		return ResponseEntity.ok(policyService.updatePolicy(policyId, dto));
 	}
 
-	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
     @DeleteMapping("/{policyId}")
     @Operation(summary = "Eliminar una política")
     @ApiResponses({ 
@@ -86,7 +86,7 @@ public class PolicyController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
     @PostMapping("/{policyId}/agents/{agentId}")
     @Operation(summary = "Asiganar un agente")
     @ApiResponses({ 
@@ -99,7 +99,7 @@ public class PolicyController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
     @DeleteMapping("/{policyId}/agents/{agentId}")
     @Operation(summary = "Desasignar agente")
     @ApiResponses({ 
@@ -112,7 +112,7 @@ public class PolicyController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
 	@PostMapping("/{policyId}/groups/{groupId}")
     @Operation(summary = "Asignar un grupo de agentes")
     @ApiResponses({ 
@@ -126,7 +126,7 @@ public class PolicyController {
 		return ResponseEntity.noContent().build(); 
 	}
 
-	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
     @DeleteMapping("/{policyId}/groups/{groupId}")
 	@Operation(summary = "Desasignar un grupo de agentes")
     @ApiResponses({ 
@@ -139,7 +139,7 @@ public class PolicyController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@PreAuthorize("hasRole('ADMIN', 'TECNICO', 'AUDITOR')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO', 'AUDITOR')")
     @Operation(summary = "Conseguir politica por su agente")
     @ApiResponses({ 
         @ApiResponse(responseCode = "204", description = "Lista de politicas obtenida correctamente"),

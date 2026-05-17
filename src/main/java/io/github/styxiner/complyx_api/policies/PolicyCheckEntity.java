@@ -26,156 +26,104 @@ import jakarta.persistence.Table;
 @Table(name = "policy_checks")
 public class PolicyCheckEntity {
 
-	@Id
-	@GeneratedValue
-	private UUID id;
+    @Id
+    @GeneratedValue
+    private UUID id;
 
-	@Column(nullable = false)
-	private String name;
-	private String rationale;
+    @Column(nullable = false)
+    private String name;
 
-	@Column(name = "check_command")
-	private String checkCommand;
+    private String rationale;
 
-	@Column(name = "created_date", nullable = false, updatable = false)
-	private LocalDateTime createdDate;
-//este es el dueño de la relacion, es el lado que tiene la FK
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "policy_element_id", nullable = false)
-	private PolicyElementEntity policyElement;
+    /**
+     * Parámetros del check en formato JSON.
+     * Debe contener "type" + los parámetros específicos del executor del agente.
+     *
+     * Ejemplos:
+     *   file_exists:  { "type": "file_exists", "path": "/etc/ssh/sshd_config", "file_type": "file", "mode": "0600" }
+     *   file_block:   { "type": "file_block",  "path": "/etc/pam.d/common-password", "must_contain": ["minlen=15"] }
+     *   file_line:    { "type": "file_line",   "path": "/etc/login.defs", "key": "PASS_MIN_LEN", "operator": ">=", "value": "15" }
+     *   ini_value:    { "type": "ini_value",   "path": "/etc/security/pwquality.conf", "key": "minlen", "operator": ">=", "value": "15" }
+     *   file_absent:  { "type": "file_absent", "path": "/etc/telnet.conf" }
+     *   dir_contains: { "type": "dir_contains","path": "/etc/cron.d", "glob": "*.conf", "min_count": 1 }
+     *   symlink:      { "type": "symlink",     "path": "/etc/localtime", "target": "/usr/share/zoneinfo/UTC" }
+     *   pkg_installed:{ "type": "pkg_installed","name": "openssh-server", "version": "8.9", "operator": ">=" }
+     *   pkg_absent:   { "type": "pkg_absent",  "name": "telnet" }
+     *   service:      { "type": "service",     "name": "sshd", "active": true, "enabled": true }
+     *   sysctl:       { "type": "sysctl",      "key": "net.ipv4.ip_forward", "operator": "=", "value": "0" }
+     *   user_attr:    { "type": "user_attr",   "username": "root", "checks": [{"attr": "shell", "operator": "=", "value": "/bin/bash"}] }
+     */
+    @Column(name = "check_params", columnDefinition = "jsonb", nullable = false)
+    private String checkParams;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "check_regulation_sections", joinColumns = @JoinColumn(name = "check_id"), inverseJoinColumns = @JoinColumn(name = "regulation_section_id"))
-	private Set<RegulationSectionEntity> regulationSections = new HashSet<>();
-	/*
-	 * No reemplazar la colección directamente. Usar
-	 * addRemediation/removeRemediation.
-	 */
-	@OneToMany(mappedBy = "policyCheck", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<PolicyRemediationEntity> remediations = new ArrayList<>();
+    @Column(name = "created_date", nullable = false, updatable = false)
+    private LocalDateTime createdDate;
 
-	public PolicyCheckEntity() {
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "policy_element_id", nullable = false)
+    private PolicyElementEntity policyElement;
 
-	public PolicyCheckEntity(UUID id, String name, String rationale, String checkCommand, LocalDateTime createdDate,
-			PolicyElementEntity policyElement, Set<RegulationSectionEntity> regulationSections,
-			List<PolicyRemediationEntity> remediations) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.rationale = rationale;
-		this.checkCommand = checkCommand;
-		this.createdDate = createdDate;
-		this.policyElement = policyElement;
-		this.regulationSections = regulationSections;
-		this.remediations = remediations;
-	}
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "check_regulation_sections",
+        joinColumns = @JoinColumn(name = "check_id"),
+        inverseJoinColumns = @JoinColumn(name = "regulation_section_id")
+    )
+    private Set<RegulationSectionEntity> regulationSections = new HashSet<>();
 
-	public UUID getId() {
-		return id;
-	}
+    @OneToMany(mappedBy = "policyCheck", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<PolicyRemediationEntity> remediations = new ArrayList<>();
 
-	public void setId(UUID id) {
-		this.id = id;
-	}
+    public PolicyCheckEntity() {}
 
-	public String getName() {
-		return name;
-	}
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-	public String getRationale() {
-		return rationale;
-	}
+    public String getRationale() { return rationale; }
+    public void setRationale(String rationale) { this.rationale = rationale; }
 
-	public void setRationale(String rationale) {
-		this.rationale = rationale;
-	}
+    public String getCheckParams() { return checkParams; }
+    public void setCheckParams(String checkParams) { this.checkParams = checkParams; }
 
-	public String getCheckCommand() {
-		return checkCommand;
-	}
+    public LocalDateTime getCreatedDate() { return createdDate; }
+    public void setCreatedDate(LocalDateTime createdDate) { this.createdDate = createdDate; }
 
-	public void setCheckCommand(String checkCommand) {
-		this.checkCommand = checkCommand;
-	}
-	public LocalDateTime getCreatedDate() {
-		return createdDate;
-	}
+    public PolicyElementEntity getPolicyElement() { return policyElement; }
+    public void setPolicyElement(PolicyElementEntity policyElement) { this.policyElement = policyElement; }
 
-	public void setCreatedDate(LocalDateTime createdDate) {
-		this.createdDate = createdDate;
-	}
-	public PolicyElementEntity getPolicyElement() {
-		return policyElement;
-	}
+    public Set<RegulationSectionEntity> getRegulationSections() { return regulationSections; }
+    public void setRegulationSections(Set<RegulationSectionEntity> regulationSections) { this.regulationSections = regulationSections; }
 
-	public void setPolicyElement(PolicyElementEntity policyElement) {
-		this.policyElement = policyElement;
-	}
+    public List<PolicyRemediationEntity> getRemediations() { return remediations; }
+    public void setRemediations(List<PolicyRemediationEntity> remediations) { this.remediations = remediations; }
 
-	public Set<RegulationSectionEntity> getRegulationSections() {
-		return regulationSections;
-	}
+    public void addRemediation(PolicyRemediationEntity remediation) {
+        remediations.add(remediation);
+        remediation.setPolicyCheck(this);
+    }
 
-	public void setRegulationSections(Set<RegulationSectionEntity> regulationSections) {
-		this.regulationSections = regulationSections;
-	}
-	public List<PolicyRemediationEntity> getRemediations() {
-		return remediations;
-	}
+    public void removeRemediation(PolicyRemediationEntity remediation) {
+        remediations.remove(remediation);
+        remediation.setPolicyCheck(null);
+    }
 
-	public void setRemediations(List<PolicyRemediationEntity> remediations) {
-		this.remediations = remediations;
-	}
+    public void addRegulationSection(RegulationSectionEntity section) { regulationSections.add(section); }
+    public void removeRegulationSection(RegulationSectionEntity section) { regulationSections.remove(section); }
 
-	// Añade una remediation manteniendo la relación bidireccional .
+    @PrePersist
+    protected void onCreate() { this.createdDate = LocalDateTime.now(); }
 
-	public void addRemediation(PolicyRemediationEntity remediation) {
-		remediations.add(remediation);
-		remediation.setPolicyCheck(this);
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        PolicyCheckEntity that = (PolicyCheckEntity) obj;
+        return id != null && id.equals(that.id);
+    }
 
-	// Elimina una remediation y gracias a orphanRemoval (DELETE automático en BD).
-
-	public void removeRemediation(PolicyRemediationEntity remediation) {
-		remediations.remove(remediation);
-		remediation.setPolicyCheck(null);
-	}
-
-	// Añade una regulation section.
-
-	public void addRegulationSection(RegulationSectionEntity section) {
-		regulationSections.add(section);
-	}
-
-	public void removeRegulationSection(RegulationSectionEntity section) {
-		regulationSections.remove(section);
-	}
-
-	// Se ejecuta automáticamente antes del INSERT.Garantiza consistencia sin
-	// depender del Service.
-
-	@PrePersist
-	protected void onCreate() {
-		this.createdDate = LocalDateTime.now();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null || getClass() != obj.getClass())
-			return false;
-		PolicyCheckEntity that = (PolicyCheckEntity) obj;
-		return id != null && id.equals(that.id);
-	}
-
-	@Override
-	public int hashCode() {
-		return getClass().hashCode();
-	}
+    @Override
+    public int hashCode() { return getClass().hashCode(); }
 }

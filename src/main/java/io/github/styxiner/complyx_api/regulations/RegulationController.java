@@ -32,7 +32,7 @@ public class RegulationController {
         this.regulationService = regulationService;
     }
 
-    @PreAuthorize("hasRole('ADMIN', 'TECNICO', 'AUDITOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TECNICO', 'AUDITOR')")
     @GetMapping
     @Operation(summary = "Obtener todas las normativas con filtros y paginación")
     @ApiResponses({
@@ -49,7 +49,7 @@ public class RegulationController {
         return ResponseEntity.ok(regulationService.findAll(filter, pageable));
     }
 
-    @PreAuthorize("hasRole('ADMIN', 'TECNICO', 'AUDITOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TECNICO', 'AUDITOR')")
     @GetMapping("/{regulationId}")
     @Operation(summary = "Obtener detalle de una normativa por su ID")
     @ApiResponses({
@@ -60,7 +60,7 @@ public class RegulationController {
         return ResponseEntity.ok(regulationService.findById(regulationId));
     }
 
-    @PreAuthorize("hasRole('ADMIN', 'AUDITOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AUDITOR')")
     @PostMapping
     @Operation(summary = "Crear una nueva normativa")
     @ApiResponses({
@@ -74,7 +74,7 @@ public class RegulationController {
         return ResponseEntity.created(location).body(created);
     }
 
-    @PreAuthorize("hasRole('ADMIN', 'AUDITOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AUDITOR')")
     @PutMapping("/{regulationId}")
     @Operation(summary = "Actualizar una normativa existente")
     @ApiResponses({
@@ -87,7 +87,7 @@ public class RegulationController {
         return ResponseEntity.ok(regulationService.update(regulationId, dto));
     }
 
-    @PreAuthorize("hasRole('ADMIN', 'AUDITOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AUDITOR')")
     @DeleteMapping("/{regulationId}")
     @Operation(summary = "Eliminar una normativa")
     @ApiResponses({
@@ -99,7 +99,7 @@ public class RegulationController {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN','AUDITOR')")
+    @PreAuthorize("hasAnyRole('ADMIN','AUDITOR')")
     @PostMapping("/{regulationId}/pdf")
     @Operation(summary = "Subir el PDF asociado a una normativa")
     @ApiResponses({
@@ -114,7 +114,7 @@ public class RegulationController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN', 'AUDITOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AUDITOR')")
     @PostMapping("/{regulationId}/sections")
     @Operation(summary = "Añadir una sección a una normativa")
     @ApiResponses({

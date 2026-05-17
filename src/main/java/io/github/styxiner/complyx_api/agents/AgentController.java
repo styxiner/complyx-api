@@ -7,6 +7,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +26,7 @@ public class AgentController {
 	}
 
 	// Lista los agentes aplicando filtros y paginacion.
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
 	@GetMapping
 	@Operation(summary = "Obtener todos los agentes con filtros y paginacion")
 	@ApiResponses({
@@ -35,6 +37,7 @@ public class AgentController {
 		return ResponseEntity.ok(agentService.findAll(agentFilter, pageable));
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
 	@GetMapping("/{agentId}")
 	@Operation(summary = "Obtener un agente por su ID")
 	@ApiResponses({
@@ -46,6 +49,7 @@ public class AgentController {
 	}
 
 	// Registra un nuevo agente
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
 	@PostMapping("/register")
 	@Operation(summary = "Registrar un nuevo agente")
 	@ApiResponses({
@@ -60,6 +64,7 @@ public class AgentController {
 	}
 
 	// Asigna un grupo existente a un agente existente.
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
 	@PostMapping("/{agentId}/groups/{groupId}")
 	@Operation(summary = "Asignar un grupo a un agente")
 	@ApiResponses({
@@ -70,6 +75,7 @@ public class AgentController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
 	@DeleteMapping("/{agentId}/groups/{groupId}")
 	@Operation(summary = "Quitar un grupo de un agente")
 	@ApiResponses({
@@ -81,6 +87,7 @@ public class AgentController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
 	@DeleteMapping("/{agentId}")
 	@Operation(summary = "Eliminar un agente")
 	@ApiResponses({
@@ -93,6 +100,7 @@ public class AgentController {
 	}
 
 	// Activa el agente sin modificar el resto de sus datos.
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
 	@PatchMapping("/{agentId}/enable")
 	@Operation(summary = "Activar un agente")
 	@ApiResponses({
@@ -103,6 +111,7 @@ public class AgentController {
 		return ResponseEntity.ok(agentService.enable(agentId));
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
 	@PatchMapping("/{agentId}/disable")
 	@Operation(summary = "Desactivar un agente")
 	@ApiResponses({

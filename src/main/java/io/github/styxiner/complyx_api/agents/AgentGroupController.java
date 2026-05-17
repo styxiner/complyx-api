@@ -25,7 +25,7 @@ public class AgentGroupController {
 		this.groupService = groupService;
 	}
 
-	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
 	@GetMapping
 	@Operation(summary = "Obtener todos los grupos de agentes con filtros y paginacion")
 	@ApiResponses({
@@ -35,7 +35,7 @@ public class AgentGroupController {
 		return ResponseEntity.ok(groupService.findAll(filter, pageable));
 	}
 
-	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
 	@GetMapping("/{groupId}")
 	@Operation(summary = "Obtener grupo por ID")
 	@ApiResponses({
@@ -47,7 +47,7 @@ public class AgentGroupController {
 	}
 
 	// Crea un grupo nuevo y devuelve la URL del recurso creado.
-	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
 	@PostMapping
 	@Operation(summary = "Crear un nuevo grupo")
 	@ApiResponses({
@@ -61,7 +61,7 @@ public class AgentGroupController {
 		return ResponseEntity.created(location).body(created);
 	}
 
-	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
 	@DeleteMapping("/{groupId}")
 	@Operation(summary = "Eliminar grupo")
 	@ApiResponses({
@@ -73,7 +73,7 @@ public class AgentGroupController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@PreAuthorize("hasRole('ADMIN', 'TECNICO')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
 	@PatchMapping("/{groupId}")
 	@Operation(summary = "Actualizar grupo parcialmente")
 	@ApiResponses({

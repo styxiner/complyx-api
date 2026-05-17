@@ -32,7 +32,7 @@ public class ThreatController {
         this.threatService = threatService;
     }
 
-    @PreAuthorize("hasRole('ADMIN', 'TECNICO', 'AUDITOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TECNICO', 'AUDITOR')")
     @GetMapping
     @Operation(summary = "Obtener todas las amenazas con paginación")
     @ApiResponses({
@@ -48,7 +48,7 @@ public class ThreatController {
         return ResponseEntity.ok(threatService.findAll(pageable));
     }
 
-    @PreAuthorize("hasRole('ADMIN', 'TECNICO', 'AUDITOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TECNICO', 'AUDITOR')")
     @GetMapping("/{threatId}")
     @Operation(summary = "Obtener una amenaza por su ID")
     @ApiResponses({
@@ -59,7 +59,7 @@ public class ThreatController {
         return ResponseEntity.ok(threatService.findById(threatId));
     }
 
-    @PreAuthorize("hasRole('ADMIN', 'TECNICO')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
     @PostMapping
     @Operation(summary = "Crear una nueva amenaza")
     @ApiResponses({
@@ -77,7 +77,7 @@ public class ThreatController {
         ).body(created);
     }
 
-    @PreAuthorize("hasRole('ADMIN', 'TECNICO')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
     @PatchMapping("/{threatId}")
     @Operation(summary = "Actualizar parcialmente una amenaza")
     @ApiResponses({
@@ -90,7 +90,7 @@ public class ThreatController {
         return ResponseEntity.ok(threatService.update(threatId, dto));
     }
 
-    @PreAuthorize("hasRole('ADMIN', 'TECNICO')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
     @DeleteMapping("/{threatId}")
     @Operation(summary = "Eliminar una amenaza")
     @ApiResponses({
