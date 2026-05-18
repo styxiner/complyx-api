@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -100,7 +101,7 @@ public class RegulationController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','AUDITOR')")
-    @PostMapping("/{regulationId}/pdf")
+    @PostMapping(value = "/{regulationId}/pdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Subir el PDF asociado a una normativa")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "PDF almacenado correctamente"),
@@ -109,7 +110,7 @@ public class RegulationController {
     })
     public ResponseEntity<Void> uploadPdf(
             @PathVariable UUID regulationId,
-            @RequestParam("pdf") MultipartFile pdf) {
+            @RequestPart("pdf") MultipartFile pdf) {
         regulationService.storePdf(regulationId, pdf);
         return ResponseEntity.ok().build();
     }
