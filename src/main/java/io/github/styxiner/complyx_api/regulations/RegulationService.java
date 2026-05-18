@@ -6,11 +6,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,7 +26,8 @@ public class RegulationService {
     private final RegulationRepository regulationRepository;
     private final RegSectionRepository regSectionRepository;
 
-    private static final String PDF_STORAGE_PATH = "uploads/regulations/";
+    @Value("${complyx.regulations.upload-path:/var/lib/complyx/regulations}")
+    private String pdfStoragePath;
 
     public RegulationService(RegulationRepository regulationRepository,
                              RegSectionRepository regSectionRepository) {
@@ -76,26 +83,74 @@ public class RegulationService {
         regulationRepository.deleteById(regulationId);
     }
 
+    @Transactional
     public String storePdf(UUID regulationId, MultipartFile pdf) {
         RegulationEntity entity = regulationRepository.findById(regulationId)
-            .orElseThrow(new java.util.function.Supplier<ResponseStatusException>() {
-                @Override
-                public ResponseStatusException get() {
-                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "No se ha encontrado la normativa");
-                }
-            });
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Normativa no encontrada: " + regulationId));
+
+        if (pdf.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El fichero PDF está vacío");
+        }
+
         try {
-            Path dir = Paths.get(PDF_STORAGE_PATH);
+            Path dir = Paths.get(pdfStoragePath);
             Files.createDirectories(dir);
-            String filename = regulationId + "_" + pdf.getOriginalFilename();
+
+            // Usar solo el UUID como nombre para evitar problemas con nombres de fichero con espacios
+            String filename = regulationId + ".pdf";
             Path destination = dir.resolve(filename);
+
             pdf.transferTo(destination);
             entity.setPdfPath(destination.toString());
             regulationRepository.save(entity);
+
             return destination.toString();
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No se ha podido almacenar el PDF");
+            throw new ResponseStatusException(
+                HttpStatus.INTERNAL_SERVER_ERROR, "No se ha podido almacenar el PDF: " + e.getMessage());
         }
+    }
+    
+    @Transactional(readOnly = true)
+    public Resource getPdf(UUID regulationId) {
+
+        Optional<RegulationEntity> optional = regulationRepository.findById(regulationId);
+
+        if (!optional.isPresent()) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Fichero PDF no encontrado en disco"
+            );
+        }
+
+        RegulationEntity entity = optional.get();
+
+        if (entity.getPdfPath() == null) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Esta normativa no tiene PDF asociado"
+            );
+        }
+
+        Path path = Paths.get(entity.getPdfPath());
+        Resource resource = new FileSystemResource(path);
+
+        if (!resource.exists()) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Fichero PDF no encontrado en disco"
+            );
+        }
+
+        return resource;
+    }
+
+    private ResponseStatusException regulationNotFound(UUID id) {
+        return new ResponseStatusException(
+            HttpStatus.NOT_FOUND,
+            "Normativa no encontrada: " + id
+        );
     }
 
     public RegulationDetailDTO addSection(UUID regulationId, RegSectionCreateDTO dto) {

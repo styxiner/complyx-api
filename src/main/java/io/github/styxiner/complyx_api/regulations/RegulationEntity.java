@@ -16,7 +16,7 @@ public class RegulationEntity {
 	@Column(nullable = false)
 	private String name;
 
-	@Column(name = "pdf_path")
+	@Column(name = "pdf_path", nullable = true)
 	private String pdfPath;
 
 	@Column(name = "added_date", nullable = false, updatable = false)

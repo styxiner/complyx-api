@@ -1,11 +1,17 @@
 package io.github.styxiner.complyx_api.regulations;
 
 import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -114,7 +120,22 @@ public class RegulationController {
         regulationService.storePdf(regulationId, pdf);
         return ResponseEntity.ok().build();
     }
-
+    
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @GetMapping("/{regulationId}/pdf")
+    @Operation(summary = "Obtener el PDF asociado a una normativa")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "PDF devuelto correctamente"),
+        @ApiResponse(responseCode = "404", description = "Normativa o PDF no encontrado")
+    })
+    public ResponseEntity<Resource> getPdf(@PathVariable UUID regulationId) {
+        Resource pdf = regulationService.getPdf(regulationId);
+        return ResponseEntity.ok()
+            .contentType(MediaType.APPLICATION_PDF)
+            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + pdf.getFilename() + "\"")
+            .body(pdf);
+    }
+    
     @PreAuthorize("hasAnyRole('ADMIN', 'AUDITOR')")
     @PostMapping("/{regulationId}/sections")
     @Operation(summary = "Añadir una sección a una normativa")
