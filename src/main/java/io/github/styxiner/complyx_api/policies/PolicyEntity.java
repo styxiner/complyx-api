@@ -3,6 +3,8 @@ package io.github.styxiner.complyx_api.policies;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import org.hibernate.annotations.UpdateTimestamp;
+
 import io.github.styxiner.complyx_api.agents.AgentEntity;
 import io.github.styxiner.complyx_api.agents.AgentGroupEntity;
 import jakarta.persistence.CascadeType;
@@ -39,6 +41,7 @@ public class PolicyEntity {
 	private Severity severity;
 	@Column(name = "created_date", nullable = false, updatable = false)
 	private LocalDateTime createdDate;
+	@UpdateTimestamp
 	@Column(name = "last_modified")
 	private LocalDateTime lastModified;
 	/*

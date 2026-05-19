@@ -61,7 +61,7 @@ public class PolicyController {
 		return ResponseEntity.created(location).body(created);
     }
 
-	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO'')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
     @PutMapping("/{policyId}")
     @Operation(summary = "Actualizar una polÃ­tica existente")
     @ApiResponses({ 
