@@ -1,6 +1,7 @@
 package io.github.styxiner.complyx_api.agents;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -124,31 +125,27 @@ public class AgentService {
      */
     public PolicyComplianceDTO getPolicyResults(UUID agentId, UUID policyId) {
 
-        // Validar que el agente existe
         requireAgent(agentId);
 
-        // Cargar la política con sus elementos y checks
         PolicyEntity policy = policyRepository.findById(policyId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Política no encontrada: " + policyId));
 
-        // Último resultado por check (una sola query con DISTINCT ON)
         List<CheckResultEntity> rawResults =
                 checkResultRepository.findLatestByAgentAndPolicy(agentId, policyId);
 
-        Map<UUID, CheckResultEntity> resultByCheckId = rawResults.stream()
-                .collect(Collectors.toMap(
-                        r -> r.getCheck().getId(),
-                        r -> r));
+        Map<UUID, CheckResultEntity> resultByCheckId = new HashMap<>();
+        for (CheckResultEntity r : rawResults) {
+            resultByCheckId.put(r.getCheck().getId(), r);
+        }
 
-        // Scores por elemento
         List<ComplianceScoreEntity> scores =
                 scoreRepository.findByAgentIdAndPolicy_Id(agentId, policyId);
 
-        Map<UUID, ComplianceScoreEntity> scoreByElementId = scores.stream()
-                .collect(Collectors.toMap(
-                        ComplianceScoreEntity::getPolicyElementId,
-                        s -> s));
+        Map<UUID, ComplianceScoreEntity> scoreByElementId = new HashMap<>();
+        for (ComplianceScoreEntity s : scores) {
+            scoreByElementId.put(s.getPolicyElementId(), s);
+        }
 
         // ── Construir DTO ─────────────────────────────────────────────────────
 
@@ -210,15 +207,18 @@ public class AgentService {
         dto.setTotalChecks(totalChecks);
         dto.setPassedChecks(passedChecks);
 
-        double globalScore = scores.stream()
-                .mapToDouble(ComplianceScoreEntity::getScore)
-                .average()
-                .orElse(0.0);
+        double scoreSum = 0.0;
+        int scoreCount  = 0;
+        for (ComplianceScoreEntity s : scores) {
+            scoreSum += s.getScore();
+            scoreCount++;
+        }
+        double globalScore = scoreCount > 0 ? scoreSum / scoreCount : 0.0;
         dto.setGlobalScore(Math.round(globalScore * 10.0) / 10.0);
 
         return dto;
     }
-
+    
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private AgentEntity requireAgent(UUID agentId) {
