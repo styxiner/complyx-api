@@ -71,6 +71,23 @@ public final class PolicySpecifications {
 			}
 		};
 	}
+	public static Specification<PolicyEntity> byRegulationId(UUID regulationId) {
+		return new Specification<PolicyEntity>() {
+			@Override
+			public Predicate toPredicate(Root<PolicyEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				if (regulationId == null) {
+					return cb.conjunction();
+				}
+				query.distinct(true);
+				// Hacemos el Join desde PolicyEntity -> elements -> checks -> regulationSections -> regulation
+				Join<Object, Object> elements = root.join("elements");
+				Join<Object, Object> checks = elements.join("checks");
+				Join<Object, Object> regulationSections = checks.join("regulationSections");
+				Join<Object, Object> regulation = regulationSections.join("regulation");
+				return cb.equal(regulation.get("id"), regulationId);
+			}
+		};
+	}
 
 	public static Specification<PolicyEntity> isAssigned() {
 		return new Specification<PolicyEntity>() {
@@ -125,7 +142,9 @@ public final class PolicySpecifications {
 		if (filter.getSeverity() != null) {
 			spec = spec.and(hasSeverity(filter.getSeverity()));
 		}
-
+		if (filter.getRegulationId() != null) {
+			spec = spec.and(byRegulationId(filter.getRegulationId()));
+		}
 		Specification<PolicyEntity> assignmentSpec = Specification.unrestricted();
 		boolean hasAssignmentFilters = false;
 

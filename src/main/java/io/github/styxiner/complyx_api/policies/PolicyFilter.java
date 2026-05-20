@@ -16,6 +16,8 @@ public class PolicyFilter {
 	private UUID assignedToAgentId;
 	@Schema(description = "Filtrar por grupo asignado")
 	private UUID assignedToGroupId;
+	@Schema(description = "Filtrar por normativa asociada")
+	private UUID regulationId;
 	/*
 	 * Indica si deben incluirse también las politicas que no están asignadas a
 	 * ningún agente ni grupo; true:todas; false: solo politicas asignadas según los
@@ -62,6 +64,14 @@ public class PolicyFilter {
 
 	public void setIncludeUnassigned(Boolean includeUnassigned) {
 		this.includeUnassigned = includeUnassigned;
+	}
+
+	public UUID getRegulationId() {
+		return regulationId;
+	}
+
+	public void setRegulationId(UUID regulationId) {
+		this.regulationId = regulationId;
 	}
 
 }
