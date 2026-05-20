@@ -55,13 +55,26 @@ public class RegulationService {
             });
         return toDetailDTO(entity);
     }
-
-    public RegulationDetailDTO create(RegulationCreateDTO dto) {
+    
+    @Transactional
+/*    public RegulationDetailDTO create(RegulationCreateDTO dto) {
         if (regulationRepository.findByName(dto.getName()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una normativa con el mismo nombre");
         }
         RegulationEntity entity = new RegulationEntity(dto.getName());
         return toDetailDTO(regulationRepository.save(entity));
+    }*/
+    public RegulationDetailDTO create(RegulationCreateDTO dto) {
+        if (regulationRepository.findByName(dto.getName()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una normativa con el mismo nombre");
+        }
+        try {
+            RegulationEntity entity = new RegulationEntity(dto.getName());
+            return toDetailDTO(regulationRepository.save(entity));
+        } catch (Exception e) {
+            e.printStackTrace(); // Ver el error real en consola
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
     }
 
     public RegulationDetailDTO update(UUID regulationId, RegulationUpdateDTO dto) {
@@ -76,10 +89,12 @@ public class RegulationService {
         return toDetailDTO(regulationRepository.save(entity));
     }
 
+    @Transactional
     public void delete(UUID regulationId) {
         if (!regulationRepository.existsById(regulationId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No se ha encontrado la normativa");
         }
+        regSectionRepository.deleteCheckLinksByRegulationId(regulationId);
         regulationRepository.deleteById(regulationId);
     }
 
@@ -153,6 +168,7 @@ public class RegulationService {
         );
     }
 
+    @Transactional
     public RegulationDetailDTO addSection(UUID regulationId, RegSectionCreateDTO dto) {
         RegulationEntity entity = regulationRepository.findById(regulationId)
             .orElseThrow(new java.util.function.Supplier<ResponseStatusException>() {

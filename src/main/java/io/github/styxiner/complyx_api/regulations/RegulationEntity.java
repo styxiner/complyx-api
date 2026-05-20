@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 public class RegulationEntity {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 
 	@Column(nullable = false)

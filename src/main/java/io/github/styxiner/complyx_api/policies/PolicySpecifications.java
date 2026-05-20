@@ -43,6 +43,13 @@ public final class PolicySpecifications {
 			}
 		};
 	}
+	
+	public static Specification<PolicyEntity> hasStatus(PolicyStatus status) {
+	    return (root, query, cb) -> {
+	        if (status == null) return cb.conjunction();
+	        return cb.equal(root.get("status"), status);
+	    };
+	}
 
 	public static Specification<PolicyEntity> assignedToAgent(UUID agentId) {
 		return new Specification<PolicyEntity>() {
@@ -134,6 +141,10 @@ public final class PolicySpecifications {
 		}
 
 		Specification<PolicyEntity> spec = Specification.unrestricted();
+		
+		if (filter.getStatus() != null) {
+		    spec = spec.and(hasStatus(filter.getStatus()));
+		}
 
 		if (filter.getName() != null && !filter.getName().isBlank()) {
 			spec = spec.and(hasName(filter.getName()));

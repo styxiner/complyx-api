@@ -18,6 +18,8 @@ public class PolicyFilter {
 	private UUID assignedToGroupId;
 	@Schema(description = "Filtrar por normativa asociada")
 	private UUID regulationId;
+	@Schema(description = "Filtrar por estado de la política")
+	private PolicyStatus status;
 	/*
 	 * Indica si deben incluirse también las politicas que no están asignadas a
 	 * ningún agente ni grupo; true:todas; false: solo politicas asignadas según los
@@ -72,6 +74,14 @@ public class PolicyFilter {
 
 	public void setRegulationId(UUID regulationId) {
 		this.regulationId = regulationId;
+	}
+
+	public PolicyStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(PolicyStatus status) {
+		this.status = status;
 	}
 
 }
