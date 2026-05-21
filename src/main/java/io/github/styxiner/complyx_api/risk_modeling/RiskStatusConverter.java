@@ -4,30 +4,28 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 /**
- * Convierte RiskStatus ↔ String para la columna status.
- * El schema PostgreSQL acepta: 'open', 'accepted', 'transferred', 'closed'.
- * Los estados MITIGATED y MONITORING se mapean a 'open' en BD.
+ * Convierte RiskStatus ↔ String para que Hibernate guarde en minúsculas.
  *
- * Al leer de BD, 'open' se convierte a OPEN (el estado MITIGATED/MONITORING
- * se gestiona a nivel de aplicación, no se persiste en la columna status).
+ * BD:    'open', 'accepted', 'transferred', 'closed'
+ * Enum:  OPEN,   ACCEPTED,   TRANSFERRED,   CLOSED,  ...
+ *
+ * Nota: MONITORING y MITIGATED no existen en el constraint de BD —
+ * el servicio los mapea a 'open' antes de persistir, pero el converter
+ * los guarda como 'monitoring'/'mitigated' si el constraint lo permitiera.
+ * Actualmente el servicio gestiona esto explícitamente.
  */
-@Converter(autoApply = true)
+@Converter
 public class RiskStatusConverter implements AttributeConverter<RiskStatus, String> {
 
     @Override
     public String convertToDatabaseColumn(RiskStatus status) {
-        return status == null ? null : status.toDbValue();
+        if (status == null) return null;
+        return status.name().toLowerCase();
     }
 
     @Override
     public RiskStatus convertToEntityAttribute(String dbValue) {
         if (dbValue == null) return null;
-        return switch (dbValue) {
-            case "open"        -> RiskStatus.OPEN;
-            case "accepted"    -> RiskStatus.ACCEPTED;
-            case "transferred" -> RiskStatus.TRANSFERRED;
-            case "closed"      -> RiskStatus.CLOSED;
-            default -> throw new IllegalArgumentException("Estado de riesgo desconocido: " + dbValue);
-        };
+        return RiskStatus.valueOf(dbValue.toUpperCase());
     }
 }

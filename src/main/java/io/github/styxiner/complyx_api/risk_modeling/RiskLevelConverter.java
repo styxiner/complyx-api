@@ -4,15 +4,19 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 /**
- * Convierte RiskLevel ↔ String lowercase para la columna risk_level.
- * El schema PostgreSQL tiene CHECK (risk_level IN ('low','medium','high','critical')).
+ * Convierte RiskLevel ↔ String para que Hibernate guarde en minúsculas
+ * (lo que exige el constraint de PostgreSQL) y lea de vuelta correctamente.
+ *
+ * BD:    'low', 'medium', 'high', 'critical'
+ * Enum:  LOW,   MEDIUM,   HIGH,   CRITICAL
  */
-@Converter(autoApply = true)
+@Converter
 public class RiskLevelConverter implements AttributeConverter<RiskLevel, String> {
 
     @Override
     public String convertToDatabaseColumn(RiskLevel level) {
-        return level == null ? null : level.toDbValue();
+        if (level == null) return null;
+        return level.name().toLowerCase();
     }
 
     @Override
